@@ -2,10 +2,10 @@
 #define _FIBONNACI_H_
 
 #include <iostream>
+#include <cassert>
 #include <unordered_map>
 
 using namespace std;
-
 
 // T the type of item and 
 // K is the type of key for each item
@@ -24,10 +24,10 @@ struct fibnode {
   fibnode *child = NULL;     // any one child of the current node 
   fibnode *next;             
   fibnode *prev;             
-  K key;                  // stores the key of the node
-  T item;                 // stores the item of the the node
-  unsigned int num = 0;   // the number of nodes underneath
-  bool mark = 0;          // determines if node is marked
+  K key;                    // stores the key of the node
+  T item;                   // stores the item of the the node
+  unsigned int num = 0;     // the number of nodes underneath
+  bool mark = 0;            // determines if node is marked
 };
 
 
@@ -48,12 +48,21 @@ public:
     heapSize = maxDeg = trees = marked = 0;
     min = NULL;
   }
+  // return minimum of heap
+  fibnode<T, K> getMin(); 
 
   // insert a single tree into the FibHeap
   // return the pointer to the node added to heap
   fibnode<T, K> * insert(const T& item, const K& key);
 
-  // union
+  // removes the minimum from fibheap
+  void popMin();
+
+  /*consolidates (unionizes and combines) the fibHeap
+    consolidate should only be run after a minimum element is popped
+    when the function is run the min of the fibHeap is not the true minimum
+    and thus consolidate also finds the new minimum of the heap*/
+  void consolidate();
 
   // Decrease the key of the node
   void decreaseKey(fibnode<T,K> * node, K val);
@@ -65,6 +74,15 @@ private:
   fibnode<T, K> *min;       // pointer to minimum key in fibHeap
   unsigned int marked;      // number of marked nodes 
 };
+
+
+template< typename T, typename K>
+fibnode<T, K> FibonnaciHeap<T, K>::getMin() {
+
+  // ensure tree is not empty and return dereferenced minimum
+  assert(min != NULL);
+  return *min;
+}
 
 template <typename T, typename K>
 fibnode<T, K> * FibonnaciHeap<T, K>::insert(const T& item, const K& key) {
@@ -100,6 +118,69 @@ fibnode<T, K> * FibonnaciHeap<T, K>::insert(const T& item, const K& key) {
   // return the pointer to added vertex
   return current_node;
 }
+
+template <typename T, typename K>
+void FibonnaciHeap<T, K>::consolidate() {
+  
+  // start at arbitrary minimum but track true minimum
+  fibnode<T, K> *trueMin = min;
+  return;
+
+
+}
+
+
+
+template <typename T, typename K>
+void FibonnaciHeap<T, K>::popMin() {
+
+  // cannot popMin of empty heap
+  assert(heapSize != 0);
+
+  fibnode<T, K> *poppedMin = min; 
+
+  // only the root node, delete minimum and decrement counters
+  if(heapSize == 1) {
+    delete min; 
+    heapSize--;
+    trees--;
+    return;
+  }
+
+  // popped minimum has children
+  else if(min->child != NULL) {
+    // for each child of the popped node, add the node to the list of root nodes
+    fibnode<T, K> *current = min->child;
+
+    // if there is only one root, need to make the first child 
+    // point back to itself in a doubly linked list
+    if(trees == 1) {min->next = current; min->prev = current;}
+
+    // the min in the fibheap here is not the actual min!
+    // partners should already be pointing next but edge cases need to be changed
+    do { 
+      current = current -> next;
+      current->parent = NULL;
+      current->next = min->next;
+      current->prev = min->prev;
+      min->next->prev = current;
+      min->prev->next = current;
+      min = current;
+    } while (poppedMin->child != current);
+
+    // all points have been added so now consolidate the new roots
+    consolidate();
+
+  }
+
+  delete poppedMin;
+}
+
+
+
+
+
+
 
 template <typename T, typename K>
 void FibonnaciHeap<T, K>::decreaseKey(fibnode<T,K> * node, K val) {
