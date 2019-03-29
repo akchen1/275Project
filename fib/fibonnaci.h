@@ -73,15 +73,17 @@ fibnode<T, K> * FibonnaciHeap<T, K>::insert(const T& item, const K& key) {
 
   // if the current insertion is the first
   if (heapSize == 0) {
-    current_node = new fibnode<T, K>(item, key, current_node, current_node);
+    current_node = new fibnode<T, K>(item, key);
+    current_node->prev = current_node;
+    current_node->next = current_node;
     min = current_node;
   }
 
   // fix circular linked list for 
   else {
     current_node = new fibnode<T, K>(item, key, min, min->prev);
-    min->prev = current_node;
     min->prev->next = current_node;
+    min->prev = current_node;
   }
 
   // now check if new insertion has smaller key than the current min
