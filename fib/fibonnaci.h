@@ -62,23 +62,24 @@ private:
   unsigned int heapSize;    // number of nodes
   unsigned int maxDeg;      // maximum degree of nodes in heap
   unsigned int trees;       // number of trees
-  fibnode<T, K> *min;          // pointer to minimum key in fibHeap
+  fibnode<T, K> *min;       // pointer to minimum key in fibHeap
   unsigned int marked;      // number of marked nodes 
 };
 
 template <typename T, typename K>
 fibnode<T, K> * FibonnaciHeap<T, K>::insert(const T& item, const K& key) {
-  // insert the new node before the current minimum (which is a tree)
-  fibnode<T, K> *current_node = new fibnode<T, K>(item, key, min, min->prev);
-  
-  // if current insertion is the first in empty heap circle node back to itself
+
+  fibnode<T, K> *current_node;
+
+  // if the current insertion is the first
   if (heapSize == 0) {
+    current_node = new fibnode<T, K>(item, key, current_node, current_node);
     min = current_node;
-    min->prev = min;
-    min->next = min;
   }
-  // fix circular linked list
+
+  // fix circular linked list for 
   else {
+    current_node = new fibnode<T, K>(item, key, min, min->prev);
     min->prev = current_node;
     min->prev->next = current_node;
   }
