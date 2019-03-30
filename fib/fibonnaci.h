@@ -178,7 +178,7 @@ void FibonnaciHeap<T, K>::consolidate() {
   start = min;                                // tracks node where to end consolidate
   fibnode<T, K> *current = start;             // start at the arb. root node
   fibnode<T, K> *foundNode;                   // if identical degrees exist
-  // unordered map storing degrees, and their root node /
+  // unordered map storing degrees, and their root node //
   unordered_map<unsigned int, fibnode<T,K>* > roots; 
   
   // consolidate the heap until all nodes before minimum element is satisfied
