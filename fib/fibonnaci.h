@@ -129,7 +129,7 @@ fibnode<T, K> * FibonnaciHeap<T, K>::insert(const T& item, const K& key) {
 
 template <typename T, typename K>
 fibnode<T, K> * FibonnaciHeap<T,K>::recursiveMeld(fibnode<T, K> *node1, fibnode<T, K> *node2,
-                                    unordered_map<unsigned int, fibnode<T,K> *>& roots) {
+                                    unordered_map<unsigned int, fibnode<T, K> *>& roots) {
   
   fibnode<T, K> *root;
   fibnode<T, K> *kid;
@@ -163,7 +163,7 @@ fibnode<T, K> * FibonnaciHeap<T,K>::recursiveMeld(fibnode<T, K> *node1, fibnode<
     roots[root->deg] = root;
   }
   else {
-    fibnode<T, K> foundNode = iter->second;
+    fibnode<T, K>* foundNode = iter->second;
     roots.erase(iter);
     root = recursiveMeld(foundNode, root, roots);
   }
