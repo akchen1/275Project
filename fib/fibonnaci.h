@@ -5,6 +5,7 @@
 #include <cassert>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 using namespace std;
 
@@ -62,8 +63,7 @@ public:
 
   // recursive meld will meld nodes until there are no repeats of degrees in the current roots
   // return the new root node of melded nodes
-  fibnode<T, K> * recursiveMeld(fibnode<T, K> *node1, fibnode<T, K> *node2,
-                                unordered_map<unsigned int, fibnode <T,K>*>& roots);
+  fibnode<T, K> * recursiveMeld(fibnode<T, K> *node1, fibnode<T, K> *node2);
 
   /*consolidates (unionizes and combines) the fibHeap
     consolidate should only be run after a minimum element is popped
@@ -81,6 +81,8 @@ private:
   fibnode<T, K> *start;     // start of loop for consolidate
   fibnode<T, K> *min;       // pointer to minimum key in fibHeap
   unsigned int marked;      // number of marked nodes //
+  unordered_map<unsigned int, fibnode<T, K> *> roots> rootmap;    // each degrees' root
+  vector<fibnode<T,K> *> addedRoots;                              // list of recently added roots before
 };
 
 
@@ -119,6 +121,7 @@ fibnode<T, K> * FibonnaciHeap<T, K>::insert(const T& item, const K& key) {
   }
 
   // increment heap size and tree count
+  addedNodes.push_back(current_node);
   heapSize++;
   trees++;
 
@@ -128,8 +131,7 @@ fibnode<T, K> * FibonnaciHeap<T, K>::insert(const T& item, const K& key) {
 }
 
 template <typename T, typename K>
-fibnode<T, K> * FibonnaciHeap<T,K>::recursiveMeld(fibnode<T, K> *node1, fibnode<T, K> *node2,
-                                    unordered_map<unsigned int, fibnode<T, K> *>& roots) {
+fibnode<T, K> * FibonnaciHeap<T,K>::recursiveMeld(fibnode<T, K> *node1, fibnode<T, K> *node2) {
   
   fibnode<T, K> *root;
   fibnode<T, K> *kid;
@@ -158,14 +160,14 @@ fibnode<T, K> * FibonnaciHeap<T,K>::recursiveMeld(fibnode<T, K> *node1, fibnode<
       root->child = kid;                // as long as root child points to a child it's ok; this is tidy
     }
   
-  auto iter = roots.find(root->deg);
-  if(iter == roots.end()) {
-    roots[root->deg] = root;
+  auto iter = rootmap.find(root->deg);
+  if(iter == rootmap.end()) {
+    rootmap[root->deg] = root;
   }
   else {
     fibnode<T, K>* foundNode = iter->second;
-    roots.erase(iter);
-    root = recursiveMeld(foundNode, root, roots);
+    rootmap.erase(iter);
+    root = recursiveMeld(foundNode, root);
   }
 
   return root;
@@ -178,20 +180,18 @@ void FibonnaciHeap<T, K>::consolidate() {
   start = min;                                // tracks node where to end consolidate
   fibnode<T, K> *current = start;             // start at the arb. root node
   fibnode<T, K> *foundNode;                   // if identical degrees exist
-  // unordered map storing degrees, and their root node
-  unordered_map<unsigned int, fibnode<T,K>* > roots; 
   
   // consolidate the heap until all nodes before minimum element is satisfied
   do {
-    auto iter = roots.find(current->deg);     // find root degrees in fibHeap are identical to current
-    if (iter == roots.end()) {                 // if it doesn't exist put into roots
-      roots[current->deg] = current;
+    auto iter = rootmap.find(current->deg);     // find root degrees in fibHeap are identical to current
+    if (iter == rootmap.end()) {                 // if it doesn't exist put into roots
+      rootmap[current->deg] = current;
     }
 
     else {
-      foundNode = iter->second;                               // get the identical node
-      roots.erase(iter);                                      // erase the found 
-      current = recursiveMeld(foundNode, current, roots);     // meld the nodes in question
+      foundNode = iter->second;                            // get the identical node
+      rootmap.erase(iter);                                 // erase the found 
+      current = recursiveMeld(foundNode, current);        // meld the nodes in question
     }
 
     current = current->next;
