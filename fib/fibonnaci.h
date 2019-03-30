@@ -80,7 +80,7 @@ private:
   unsigned int trees;       // number of trees
   fibnode<T, K> *start;     // start of loop for consolidate
   fibnode<T, K> *min;       // pointer to minimum key in fibHeap
-  unsigned int marked;      // number of marked nodes 
+  unsigned int marked;      // number of marked nodes //
 };
 
 
