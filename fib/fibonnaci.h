@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cassert>
 #include <unordered_map>
+#include <unordered_set>
 
 using namespace std;
 
@@ -26,6 +27,7 @@ struct fibnode {
   fibnode *prev;             
   K key;                    // stores the key of the node
   T item;                   // stores the item of the the node
+  unsigned int deg = 0;     // the degree of the node *ONLY RELEVANT FOR ROOT NODES*
   unsigned int num = 0;     // the number of nodes underneath
   bool mark = 0;            // determines if node is marked
 };
@@ -58,6 +60,11 @@ public:
   // removes the minimum from fibheap
   void popMin();
 
+  // recursive meld will meld nodes until there are no repeats of degrees in the current roots
+  // return the new root node of melded nodes
+  fibnode<T, K> * recursiveMeld(fibnode<T, K> *node1, fibnode<T, K> *node2,
+                                unordered_map<unsigned int, fibnode <T,K>*>& roots);
+
   /*consolidates (unionizes and combines) the fibHeap
     consolidate should only be run after a minimum element is popped
     when the function is run the min of the fibHeap is not the true minimum
@@ -71,12 +78,13 @@ private:
   unsigned int heapSize;    // number of nodes
   unsigned int maxDeg;      // maximum degree of nodes in heap
   unsigned int trees;       // number of trees
+  fibnode<T, K> *start;     // start of loop for consolidate
   fibnode<T, K> *min;       // pointer to minimum key in fibHeap
   unsigned int marked;      // number of marked nodes 
 };
 
 
-template< typename T, typename K>
+template <typename T, typename K>
 fibnode<T, K> FibonnaciHeap<T, K>::getMin() {
 
   // ensure tree is not empty and return dereferenced minimum
@@ -120,15 +128,77 @@ fibnode<T, K> * FibonnaciHeap<T, K>::insert(const T& item, const K& key) {
 }
 
 template <typename T, typename K>
-void FibonnaciHeap<T, K>::consolidate() {
+fibnode<T, K> * FibonnaciHeap<T,K>::recursiveMeld(fibnode<T, K> *node1, fibnode<T, K> *node2,
+                                    unordered_map<unsigned int, fibnode<T,K> *>& roots) {
   
-  // start at arbitrary minimum but track true minimum
-  fibnode<T, K> *trueMin = min;
-  return;
+  fibnode<T, K> *root;
+  fibnode<T, K> *kid;
+  // compare which key is minimum *case for first node smaller*
+  if (node1->key < node2->key) {root = node1; kid = node2;} 
+  else {root = node2; kid = node1;}
 
+  if (kid == start) {start = root;}   // if the start is becoming child, set start to stay on root
+    root->deg++;                     
+    kid->next->prev = kid->prev;     // pop kid out of root list
+    kid->prev->next = kid->next;
 
+    if (root->child == NULL) {          // if there is no child yet
+      root->child = kid;
+      kid->next = kid;
+      kid->prev = kid;
+      kid->parent = root;
+    }
+
+    else {                               // child exists
+      kid->parent = root;
+      kid->next = root->child->next;
+      kid->prev = root->child->prev;
+      root->child->next->prev = kid;
+      root->child->next = kid;
+      root->child = kid;                // as long as root child points to a child it's ok; this is tidy
+    }
+  
+  auto iter = roots.find(root->deg);
+  if(iter == roots.end()) {
+    roots[root->deg] = root;
+  }
+  else {
+    fibnode<T, K> foundNode = iter->second;
+    roots.erase(iter);
+    root = recursiveMeld(foundNode, root, roots);
+  }
+
+  return root;
 }
 
+template <typename T, typename K>
+void FibonnaciHeap<T, K>::consolidate() {
+
+  /* THE MINIMUM SHOULD CURRENTLY BE AN ARBITRARY ROOT NODE */
+  start = min;                                // tracks node where to end consolidate
+  fibnode<T, K> *current = start;             // start at the arb. root node
+  fibnode<T, K> *foundNode;                   // if identical degrees exist
+  // unordered map storing degrees, and their root node
+  unordered_map<unsigned int, fibnode<T,K>* > roots; 
+  
+  // consolidate the heap until all nodes before minimum element is satisfied
+  do {
+    auto iter = roots.find(current->deg);     // find root degrees in fibHeap are identical to current
+    if (iter == roots.end()) {                 // if it doesn't exist put into roots
+      roots[current->deg] = current;
+    }
+
+    else {
+      foundNode = iter->second;                               // get the identical node
+      roots.erase(iter);                                      // erase the found 
+      current = recursiveMeld(foundNode, current, roots);     // meld the nodes in question
+    }
+
+
+  } while (current != start);
+
+  return;
+}
 
 
 template <typename T, typename K>
@@ -147,8 +217,16 @@ void FibonnaciHeap<T, K>::popMin() {
     return;
   }
 
+  // if the minimum has no child remove minimum and temporarily set minimum to old
+  // minimum's next value *MAY NOT BE TRUE MINIMUM*
+  else if(min->child == NULL) {
+    min->prev->next = min->next;
+    min->next->prev = min->prev;
+    min = min->next;
+  }
+
   // popped minimum has children
-  else if(min->child != NULL) {
+  else {
     // for each child of the popped node, add the node to the list of root nodes
     fibnode<T, K> *current = min->child;
 
@@ -156,8 +234,8 @@ void FibonnaciHeap<T, K>::popMin() {
     // point back to itself in a doubly linked list
     if(trees == 1) {min->next = current; min->prev = current;}
 
-    // the min in the fibheap here is not the actual min!
-    // partners should already be pointing next but edge cases need to be changed
+    // After while loop may not be true minimum -- instead the child of the removed
+    // node will be set as the minimum.
     do { 
       current = current -> next;
       current->parent = NULL;
@@ -166,17 +244,15 @@ void FibonnaciHeap<T, K>::popMin() {
       min->next->prev = current;
       min->prev->next = current;
       min = current;
-    } while (poppedMin->child != current);
-
-    // all points have been added so now consolidate the new roots
-    consolidate();
-
+    } while (poppedMin->child != current);        // check
   }
+
+  // minimum has been popped so find new minimum and satisfy fib property
+  consolidate();
+
 
   delete poppedMin;
 }
-
-
 
 
 
