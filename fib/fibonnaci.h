@@ -194,10 +194,9 @@ void FibonnaciHeap<T, K>::consolidate() {
       current = recursiveMeld(foundNode, current, roots);     // meld the nodes in question
     }
 
-
+    current = current->next;
   } while (current != start);
 
-  return;
 }
 
 
