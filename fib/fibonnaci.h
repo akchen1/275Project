@@ -189,12 +189,16 @@ void FibonnaciHeap<T, K>::consolidate() {
     }
 
     else {
+      trees--;
       foundNode = iter->second;                               // get the identical node
       roots.erase(iter);                                      // erase the found 
       current = recursiveMeld(foundNode, current, roots);     // meld the nodes in question
     }
 
+    if (current->key < min->key) {min = current;}
     current = current->next;
+    
+
   } while (current != start);
 
 }
@@ -202,7 +206,7 @@ void FibonnaciHeap<T, K>::consolidate() {
 
 template <typename T, typename K>
 void FibonnaciHeap<T, K>::popMin() {
-
+  cout << "hi";
   // cannot popMin of empty heap
   assert(heapSize != 0);
 
@@ -228,27 +232,24 @@ void FibonnaciHeap<T, K>::popMin() {
   else {
     // for each child of the popped node, add the node to the list of root nodes
     fibnode<T, K> *current = min->child;
+    min = current;
 
     // if there is only one root, need to make the first child 
     // point back to itself in a doubly linked list
-    if(trees == 1) {min->next = current; min->prev = current;}
 
     // After while loop may not be true minimum -- instead the child of the removed
     // node will be set as the minimum.
     do { 
       current = current -> next;
       current->parent = NULL;
-      current->next = min->next;
-      current->prev = min->prev;
-      min->next->prev = current;
-      min->prev->next = current;
-      min = current;
+      trees++;
     } while (poppedMin->child != current);        // check
+
   }
 
+  heapSize--;
   // minimum has been popped so find new minimum and satisfy fib property
   consolidate();
-
 
   delete poppedMin;
 }
