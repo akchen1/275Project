@@ -5,6 +5,7 @@
 #include <cassert>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 using namespace std;
 
@@ -49,6 +50,7 @@ public:
   FibonnaciHeap() {
     heapSize = maxDeg = trees = marked = 0;
     min = NULL;
+    degTable.push_back(NULL);
   }
   // return minimum of heap
   fibnode<T, K> getMin(); 
@@ -83,6 +85,7 @@ private:
   unsigned int heapSize;    // number of nodes
   unsigned int maxDeg;      // maximum degree of nodes in heap
   unsigned int trees;       // number of trees (along root)
+  vector<fibnode<T,K> *> degTable;
   fibnode<T, K> *start;     // start of loop for consolidate
   fibnode<T, K> *min;       // pointer to minimum key in fibHeap
   unsigned int marked;      // number of marked nodes //
@@ -217,41 +220,41 @@ void FibonnaciHeap<T, K>::Consolidate() {
   start = min;                                // tracks node where to end consolidate
   fibnode<T, K> *current = start;             // start at the arb. root node
   fibnode<T, K> *foundNode;                   // if identical degrees exist
-  vector<unsigned int> degTable;
-  degTable.push_back(NULL);
+
 
   // consolidate the heap until all nodes before minimum element is satisfied
   do {
     if (degTable[current->deg] == NULL) {
       degTable[current->deg] = current;
       degTable.push_back(NULL);
-      current = current->next
+      current = current->next;
     }
 
     else {
       foundNode = degTable[current->deg];
       current = current->next;
-      quickMeld(foundNode, current->prev);
+      cout << "DA";
+      quickMeld(foundNode);
     } 
   } while (current != start);
 }
 
 template <typename T, typename K>
-void quickMeld(fibnode<T,K> *current) {
+void FibonnaciHeap<T,K>::quickMeld(fibnode<T,K> *current) {
 
   fibnode<T, K> *root;
   fibnode<T, K> *kid;
   while(true) {               // loop until degTable property ok
-
-    if(current->key < degTable[current->deg]) { // determine smaller key
+    if(current->key < degTable[current->deg]->key) { // determine smaller key
       root = current;
       kid = degTable[current->deg];
     }
     else {
-      current = degTable[current->deg];
+      root = degTable[current->deg];
       kid = current;
     }
 
+    degTable[current->deg] = NULL;
     root->deg++;
     trees--;
 
@@ -274,12 +277,13 @@ void quickMeld(fibnode<T,K> *current) {
       kid->prev = root->child;
     }
 
-    current = root;
     if (degTable[current->deg] == NULL) {
-      degTable[current->deg] = current;
+      degTable[current->deg] = root;
       degTable.push_back(NULL);
       break;
-    }    
+    }
+
+    current = root;
   }
 }
 
@@ -338,7 +342,7 @@ void FibonnaciHeap<T, K>::popMin() {
   cout << "consolidating" << endl;
 
   // minimum has been popped so find new minimum and satisfy fib property
-  consolidate();
+  Consolidate();
   cout << "key : " << min->key << endl;
 }
 

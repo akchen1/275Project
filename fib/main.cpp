@@ -26,7 +26,7 @@ int main() {
   // fibnode <int, int> *hi9 = heap.insert(9, 9);
 
   start = clock();
-  for(int i = 4; i < 6456789; i++) {
+  for(int i = 4; i < 10; i++) {
     heap.insert(i, i);
     //bheap.insert(i,i);
   }
@@ -88,7 +88,7 @@ int main() {
   cout << "      minCHECK" << endl;
 
   start = clock();
-  for (int i = 0; i < 5000; i++) {
+  for (int i = 0; i < 10; i++) {
     heap.popMin();
   }
   end = clock();
