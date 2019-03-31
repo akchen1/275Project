@@ -242,21 +242,21 @@ void FibonnaciHeap<T, K>::Consolidate() {
 }
 
 template <typename T, typename K>
-void FibonnaciHeap<T,K>::quickMeld(fibnode<T,K> *current) {
+void FibonnaciHeap<T,K>::quickMeld(fibnode<T,K> *target) {
 
   fibnode<T, K> *root;
   fibnode<T, K> *kid;
   while(true) {               // loop until degTable property ok
-    if(current->key < degTable[current->deg]->key) { // determine smaller key
-      root = current;
-      kid = degTable[current->deg];
+    if(target->key < degTable[target->deg]->key) { // determine smaller key
+      root = target;
+      kid = degTable[target->deg];
     }
     else {
-      root = degTable[current->deg];
-      kid = current;
+      root = degTable[target->deg];
+      kid = target;
     }
 
-    degTable[current->deg] = NULL;
+    degTable[target->deg] = NULL;
     root->deg++;
     trees--;
 
@@ -277,15 +277,18 @@ void FibonnaciHeap<T,K>::quickMeld(fibnode<T,K> *current) {
       kid->next = ((root->child)->next);
       (root->child)->next = kid;
       kid->prev = root->child;
+      kid->parent = root;
+      root->child = kid;
     }
 
     if (degTable[root->deg] == NULL) {
+      cout << issueless << endl;
       degTable[root->deg] = root;
       degTable.push_back(NULL);
-      break;
+      return;
     }
 
-    current = root;
+    target = root;
   }
 }
 
