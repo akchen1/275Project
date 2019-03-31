@@ -65,19 +65,24 @@ public:
   fibnode<T, K> * recursiveMeld(fibnode<T, K> *node1, fibnode<T, K> *node2,
                                 unordered_map<unsigned int, fibnode <T,K>*>& roots);
 
+  // *QUICK MELD WILL NOT WORK IF NEW INSERTIONS ARE MADE*
+  void quickMeld(fibnode<T, K> *current);
+
+
+
   /*consolidates (unionizes and combines) the fibHeap
     consolidate should only be run after a minimum element is popped
     when the function is run the min of the fibHeap is not the true minimum
     and thus consolidate also finds the new minimum of the heap*/
-  void consolidate();
-
+  void slowConsolidate();
+  void Consolidate();
   // Decrease the key of the node
   void decreaseKey(fibnode<T,K> * node, K val);
 
 private:
   unsigned int heapSize;    // number of nodes
   unsigned int maxDeg;      // maximum degree of nodes in heap
-  unsigned int trees;       // number of trees
+  unsigned int trees;       // number of trees (along root)
   fibnode<T, K> *start;     // start of loop for consolidate
   fibnode<T, K> *min;       // pointer to minimum key in fibHeap
   unsigned int marked;      // number of marked nodes //
@@ -172,7 +177,7 @@ fibnode<T, K> * FibonnaciHeap<T,K>::recursiveMeld(fibnode<T, K> *node1, fibnode<
 }
 
 template <typename T, typename K>
-void FibonnaciHeap<T, K>::consolidate() {
+void FibonnaciHeap<T, K>::slowConsolidate() {
 
   /* THE MINIMUM SHOULD CURRENTLY BE AN ARBITRARY ROOT NODE */
   start = min;                                // tracks node where to end consolidate
@@ -180,6 +185,7 @@ void FibonnaciHeap<T, K>::consolidate() {
   fibnode<T, K> *foundNode;                   // if identical degrees exist
   // unordered map storing degrees, and their root node //
   unordered_map<unsigned int, fibnode<T,K>* > roots; 
+
   
   // consolidate the heap until all nodes before minimum element is satisfied
   do {
@@ -201,6 +207,80 @@ void FibonnaciHeap<T, K>::consolidate() {
 
   } while (current != start);
 
+}
+
+template <typename T, typename K>
+void FibonnaciHeap<T, K>::Consolidate() {
+
+  /* THE MINIMUM SHOULD CURRENTLY BE AN ARBITRARY ROOT NODE */
+  if (trees == 1) {return;}
+  start = min;                                // tracks node where to end consolidate
+  fibnode<T, K> *current = start;             // start at the arb. root node
+  fibnode<T, K> *foundNode;                   // if identical degrees exist
+  vector<unsigned int> degTable;
+  degTable.push_back(NULL);
+
+  // consolidate the heap until all nodes before minimum element is satisfied
+  do {
+    if (degTable[current->deg] == NULL) {
+      degTable[current->deg] = current;
+      degTable.push_back(NULL);
+      current = current->next
+    }
+
+    else {
+      foundNode = degTable[current->deg];
+      current = current->next;
+      quickMeld(foundNode, current->prev);
+    } 
+  } while (current != start);
+}
+
+template <typename T, typename K>
+void quickMeld(fibnode<T,K> *current) {
+
+  fibnode<T, K> *root;
+  fibnode<T, K> *kid;
+  while(true) {               // loop until degTable property ok
+
+    if(current->key < degTable[current->deg]) { // determine smaller key
+      root = current;
+      kid = degTable[current->deg];
+    }
+    else {
+      current = degTable[current->deg];
+      kid = current;
+    }
+
+    root->deg++;
+    trees--;
+
+    // pop out the child from roots
+    (kid->next)->prev = kid->prev;
+    (kid->prev)->next = kid->next;
+    
+    // insert child into root
+    if(root->child == NULL) {
+      root->child = kid;
+      kid->next = kid;
+      kid->prev = kid;
+      kid->parent = root;
+    }
+
+    else {
+      ((root->child)->next)->prev = kid;
+      kid->next = ((root->child)->next);
+      (root->child)->next = kid;
+      kid->prev = root->child;
+    }
+
+    current = root;
+    if (degTable[current->deg] == NULL) {
+      degTable[current->deg] = current;
+      degTable.push_back(NULL);
+      break;
+    }    
+  }
 }
 
 
@@ -246,9 +326,10 @@ void FibonnaciHeap<T, K>::popMin() {
 
     (min->next)->prev = current;
     current->next = min->next;    
-
+    trees += min->deg;
     // set arbritrary minimum as last element of the children
     min = current;
+    
   }
   
   delete poppedMin;
