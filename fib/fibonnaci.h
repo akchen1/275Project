@@ -188,7 +188,7 @@ void FibonnaciHeap<T, K>::consolidate() {
       roots[current->deg] = current;
     }
 
-    else if (iter->second == current{
+    else if (iter->second == current) {
       trees--;
       foundNode = iter->second;                               // get the identical node
       roots.erase(iter);                                      // erase the found 

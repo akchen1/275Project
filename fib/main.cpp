@@ -87,13 +87,13 @@ int main() {
   cout << heap.getMin().key << endl;
   cout << "      minCHECK" << endl;
 
-  // start = clock();
-  // for (int i = 0; i < 5000; i++) {
-  //   heap.popMin();
-  // }
-  // end = clock();
-  // cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-  // cout << "fib time: " << cpu_time_used << endl;
+  start = clock();
+  for (int i = 0; i < 5000; i++) {
+    heap.popMin();
+  }
+  end = clock();
+  cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+  cout << "fib time: " << cpu_time_used << endl;
 
 
 
