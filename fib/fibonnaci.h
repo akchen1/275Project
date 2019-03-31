@@ -184,11 +184,11 @@ void FibonnaciHeap<T, K>::consolidate() {
   // consolidate the heap until all nodes before minimum element is satisfied
   do {
     auto iter = roots.find(current->deg);     // find root degrees in fibHeap are identical to current
-    if (iter == roots.end()) {                 // if it doesn't exist put into roots
+    if (iter == roots.end()) {                // if it doesn't exist put into roots
       roots[current->deg] = current;
     }
 
-    else {
+    else if (iter->second == current{
       trees--;
       foundNode = iter->second;                               // get the identical node
       roots.erase(iter);                                      // erase the found 
