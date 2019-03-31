@@ -197,7 +197,7 @@ void FibonnaciHeap<T, K>::consolidate() {
 
     if (current->key < min->key) {min = current;}
     current = current->next;
-    
+
 
   } while (current != start);
 
@@ -206,9 +206,10 @@ void FibonnaciHeap<T, K>::consolidate() {
 
 template <typename T, typename K>
 void FibonnaciHeap<T, K>::popMin() {
-  cout << "hi";
   // cannot popMin of empty heap
   assert(heapSize != 0);
+
+  cout << "popping" << endl;
 
   fibnode<T, K> *poppedMin = min; 
 
@@ -223,35 +224,41 @@ void FibonnaciHeap<T, K>::popMin() {
   // if the minimum has no child remove minimum and temporarily set minimum to old
   // minimum's next value *MAY NOT BE TRUE MINIMUM*
   else if(min->child == NULL) {
-    min->prev->next = min->next;
-    min->next->prev = min->prev;
+    (min->prev)->next = min->next;
+    (min->next)->prev = min->prev;
     min = min->next;
   }
 
   // popped minimum has children
   else {
-    // for each child of the popped node, add the node to the list of root nodes
+    // keep track of node
     fibnode<T, K> *current = min->child;
-    min = current;
 
-    // if there is only one root, need to make the first child 
-    // point back to itself in a doubly linked list
+    // move the linked children to the root nodes
+    (min->prev)->next = current;
+    current->prev = min->prev;
 
-    // After while loop may not be true minimum -- instead the child of the removed
-    // node will be set as the minimum.
-    do { 
-      current = current -> next;
+    for(unsigned int i = 0; i < min->deg-1; i++) {
       current->parent = NULL;
       trees++;
-    } while (poppedMin->child != current);        // check
+      current = current->next;
+    }
 
+    (min->next)->prev = current;
+    current->next = min->next;    
+
+    // set arbritrary minimum as last element of the children
+    min = current;
   }
-
+  
+  delete poppedMin;
   heapSize--;
+
+  cout << "consolidating" << endl;
+
   // minimum has been popped so find new minimum and satisfy fib property
   consolidate();
-
-  delete poppedMin;
+  cout << "key : " << min->key << endl;
 }
 
 
