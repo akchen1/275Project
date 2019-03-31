@@ -13,4 +13,11 @@ build-mega2560/arduino_main.o: arduino_main.cpp \
  /usr/share/arduino/hardware/arduino//cores/arduino/Print.h \
  /usr/share/arduino/libraries/SPI/SPI.h \
  /home/cmput274/arduino-ua/libraries/Adafruit_GFX/Adafruit_GFX.h \
- /home/cmput274/arduino-ua/libraries/Adafruit_GFX/gfxfont.h
+ /home/cmput274/arduino-ua/libraries/Adafruit_GFX/gfxfont.h \
+ /usr/share/arduino/libraries/SD/SD.h \
+ /usr/share/arduino/libraries/SD/utility/SdFat.h \
+ /usr/share/arduino/libraries/SD/utility/Sd2Card.h \
+ /usr/share/arduino/libraries/SD/utility/Sd2PinMap.h \
+ /usr/share/arduino/libraries/SD/utility/SdInfo.h \
+ /usr/share/arduino/libraries/SD/utility/FatStructs.h \
+ /usr/share/arduino/libraries/SD/utility/SdFatUtil.h

@@ -25,8 +25,8 @@ int main() {
 			double y = (double)i/((double)height);
 
 			// Typical Perlin noise
-			double n = noise(10 * x, 10 * y, 0.8,p);
-			cout << n << endl;
+			double n = noise( 50*x, 50* y, 1,p);
+			// cout << n << endl;
 			// Wood like structure
 			// double n = 20 * noise(x, y, 0.8, p);
 			// n = n - floor(n);

@@ -34,9 +34,9 @@ double noise(double x, double y, double z, const vector<int> coords) {
   int y0 = (int) floor(y) & 255;
   int z0 = (int) floor(z) & 255;
   
-  double sx = x - (double) x0;
-  double sy = y - (double) y0;
-  double sz = z - (double) z0;
+  double sx = x - (double) floor(x);
+  double sy = y - (double) floor(y);
+  double sz = z - (double) floor(z);
 
   double u = smooth(sx);
   double v = smooth(sy);
@@ -60,7 +60,7 @@ double noise(double x, double y, double z, const vector<int> coords) {
   double GradAA1 = Gradient(coords[AA+1], sx, sy, sz-1);
   double GradBA1 = Gradient(coords[BA+1], sx-1, sy, sz-1);
   double GradAB1 = Gradient(coords[AB+1], sx, sy - 1, sz-1);
-  double GradBB1 = Gradient(coords[BB+1], sx-1, sy-1, sz)-1;
+  double GradBB1 = Gradient(coords[BB+1], sx-1, sy-1, sz-1);
 
   double Top_x = interpolate(u, GradAA, GradBA);
   double Top_y = interpolate(u, GradAB, GradBB);
@@ -69,6 +69,7 @@ double noise(double x, double y, double z, const vector<int> coords) {
 
   double value = interpolate(w, interpolate(v,Top_x,Top_y), interpolate(v, Bot_x, Bot_y));
   return value;
+
 }
 // int main() {
 
