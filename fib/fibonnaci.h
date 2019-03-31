@@ -227,13 +227,15 @@ void FibonnaciHeap<T, K>::Consolidate() {
     if (degTable[current->deg] == NULL) {
       degTable[current->deg] = current;
       degTable.push_back(NULL);
+      if(current->key < min-> key) {min = current;}
       current = current->next;
     }
 
     else {
+      if(current->key < min-> key) {min = current;}
+      trees--;
       foundNode = degTable[current->deg];
       current = current->next;
-      cout << "DA";
       quickMeld(foundNode);
     } 
   } while (current != start);
@@ -277,8 +279,8 @@ void FibonnaciHeap<T,K>::quickMeld(fibnode<T,K> *current) {
       kid->prev = root->child;
     }
 
-    if (degTable[current->deg] == NULL) {
-      degTable[current->deg] = root;
+    if (degTable[root->deg] == NULL) {
+      degTable[root->deg] = root;
       degTable.push_back(NULL);
       break;
     }
@@ -321,11 +323,11 @@ void FibonnaciHeap<T, K>::popMin() {
     // move the linked children to the root nodes
     (min->prev)->next = current;
     current->prev = min->prev;
+    current->parent = NULL;
 
     for(unsigned int i = 0; i < min->deg-1; i++) {
-      current->parent = NULL;
-      trees++;
       current = current->next;
+      current->parent = NULL;
     }
 
     (min->next)->prev = current;
