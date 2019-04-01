@@ -267,7 +267,10 @@ list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash>
   unordered_map<int, PLI> searchTree;
   // int start_vertex = closest_point(nodes, start); // start_vertex vertex
   // int end_vertex = closest_point(nodes, end);  // end vertex
-  dijkstra(graph, start, searchTree); // get path from dijkstra
+  
+  //dijkstra(graph, start, searchTree); // get path from dijkstra
+  
+  fibDijkstra(graph, start, end, searchTree, vertex);
 
   list<int> path;
   list<pointData> path1;
@@ -313,6 +316,8 @@ int main() {
     processRequest(line, start, end);
     int startnode = closest_point(vertex, start);
     int endnode = closest_point(vertex, end);
+
+
     // cout << startnode << " " << endnode << endl;
     // cout << start.x << " " << start.y << " " << end.x << " "<<end.y <<endl;
     list<pointData> path = getPath(vertex, graph, startnode, endnode); 
