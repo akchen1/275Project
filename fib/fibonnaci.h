@@ -298,6 +298,7 @@ void FibonnaciHeap<T, K>::popMin() {
 
 template <typename T, typename K>
 fibnode<T, K> * FibonnaciHeap<T, K>::cut(fibnode<T, K> *node, fibnode<T, K> *adult) {
+  trees++;
 
   // mark the cut unless it's a root 
   if (adult->parent != NULL) {
@@ -311,7 +312,7 @@ fibnode<T, K> * FibonnaciHeap<T, K>::cut(fibnode<T, K> *node, fibnode<T, K> *adu
   }
 
   else if (adult->child == node) {      // disown the kid
-    adult->child = node->next
+    adult->child = node->next;
     node->parent = NULL;
   }
 
@@ -324,20 +325,27 @@ fibnode<T, K> * FibonnaciHeap<T, K>::cut(fibnode<T, K> *node, fibnode<T, K> *adu
   node->prev = min;
   min->next = node;
 
+  if (adult->deg == maxDeg) {
+    maxDeg--;
+    adult->deg--;
+  }
+  else {adult->deg--;}
+
   return adult;
 }
 
 template <typename T, typename K>
 void FibonnaciHeap<T, K>::decreaseKey(fibnode<T,K> * node, K val) {
+  cout << " Running decreaseKey " << endl;
 
   node->key = val;
 
   while (true) {
-
+    cout << " Loop counts " << endl;  
     fibnode<T, K> *adult = node->parent;
 
     if(adult == NULL) {                                   // no parent case
-      adult->mark = 0;                                    // cannot mark parents
+      node->mark = 0;                                    // cannot mark parents
       if (node->key < min->key) {min = node;}
       break;
     }
@@ -347,15 +355,17 @@ void FibonnaciHeap<T, K>::decreaseKey(fibnode<T,K> * node, K val) {
     }
 
     // heap violation cases
-    else if(node->key < adult->key && !adult->marked) {    // adult not marked
+    else if(node->key < adult->key && !adult->mark) {    // adult not marked
     // cut out the node then mark adult (not roots)
-      cut(node);
+      cut(node, adult);
+      if (node->key < min->key) {min = node;}
       break;
     }
 
     else {
     // this case requires recursive cutting thus no break and set node to adult                         
-      node = cut(node);   
+      node = cut(node, adult);   
+      if (node->key < min->key) {min = node;}
     }
 
   }
