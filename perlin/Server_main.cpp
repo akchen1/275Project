@@ -124,6 +124,7 @@ void communicate(list<pointData> path) {
         // return;
   }
   for (auto i : path) {
+    cout << i.x << " " << i.y << endl;
     Serial.writeline(to_string(i.x));
     Serial.writeline("\n");
     confirm = wait_confirmation(1000);
@@ -194,7 +195,7 @@ string waitRequest() {
     line = Serial.readline();
     cout << "recieved " << line << endl;
   } while (line.substr(0,1) != "R");
-  cout << "recieved" << endl;
+  // cout << "recieved" << endl;
   return line;
 }
 
@@ -317,6 +318,7 @@ int main() {
     list<pointData> path = getPath(vertex, graph, startnode, endnode); 
     // cout << path.size() << endl;
     communicate(path);
+    // waitRequest();
     // for (i : path) {
     //   cout << i << endl;
     // }

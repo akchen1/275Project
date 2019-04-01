@@ -45,6 +45,7 @@ int playerY = 120;
 int oldX = playerX;
 int oldY = playerY;
 unsigned long bookmark = 0;
+bool solve = false;
 
 uint8_t map_number = 1;
 /* | 1 | 2 | 3 | 4 | 5 |
@@ -52,11 +53,13 @@ uint8_t map_number = 1;
    | 11| 12| 13| 14| 15|
    | 16| 17| 18| 19| 20|
    | 21| 22| 23| 24| 25|*/
+uint16_t map_bounds[6] = {0, 240, 480, 720, 960, 1200};
 
 void generateMap();
 void calculateHeight(const int i, const double val);
 void drawButtons();
 bool read();
+
 void setup() {
   init();
   Serial.begin(9600);
@@ -106,21 +109,20 @@ void drawButtons() {
   tft.drawChar(MAP_WIDTH + (DISPLAY_WIDTH - MAP_WIDTH)/2, 212, 'E', ILI9341_BLACK, ILI9341_BLUE, 2);
 }  
 
+uint8_t convert_y_mapnumber(uint8_t number) {
+  uint8_t newlevel = 4;
+  if (number < 6) {newlevel = 0;}
+  else if (number < 11) {newlevel = 1;}
+  else if (number < 16) {newlevel = 2;}
+  else if (number < 21) {newlevel = 3;}
+  return newlevel;
+}
+
 void sendRequest(uint16_t x, uint16_t y, uint8_t map) {
   // uint16_t x_start = floor(constrain(playerX / 5, 0, 47));
   // uint16_t y_start = floor(constrain(playerY / 5, 0, 47));
-  uint8_t y_level = 4;
-  uint8_t y_end_level = 4;
-
-  if (map_number < 6) {y_level = 0;}
-  else if (map_number < 11) {y_level = 1;}
-  else if (map_number < 16) {y_level = 2;}
-  else if (map_number < 21) {y_level = 3;}
-
-  if (map < 6) {y_end_level = 0;}
-  else if (map < 11) {y_end_level = 1;}
-  else if (map < 16) {y_end_level = 2;}
-  else if (map < 21) {y_end_level = 3;}
+  uint8_t y_level = convert_y_mapnumber(map_number);
+  uint8_t y_end_level = convert_y_mapnumber(map);
 
   Serial.print("R ");
   Serial.print(playerX + ((map_number-1)%5)*240);
@@ -131,6 +133,7 @@ void sendRequest(uint16_t x, uint16_t y, uint8_t map) {
   Serial.print(" ");
   Serial.println(y + y_end_level*240);
   delay(50);
+  solve = true;
 }
 
 bool check_touch() {
@@ -259,6 +262,24 @@ void generateMap() {
   }
 }
 
+
+void drawPath() {
+    for (int i = 0; i < pathsize - 1; i++) {
+      // Serial.print(pathx[i]);
+      // Serial.print(" ");
+      // Serial.println(pathy[i]);
+        if (pathx[i] > map_bounds[(map_number-1)%5] && pathx[i] < map_bounds[(map_number-1)%5+1]) {
+            if (pathy[i] > map_bounds[convert_y_mapnumber(map_number)] && pathy[i] < map_bounds[convert_y_mapnumber(map_number)+1]) {
+                uint16_t x = pathx[i]-((map_number-1)%5)*240;
+                uint16_t y = pathy[i]-(convert_y_mapnumber(map_number)*240);
+                uint16_t x1 = pathx[i+1]-((map_number-1)%5)*240;
+                uint16_t y1 = pathy[i+1]-(convert_y_mapnumber(map_number)*240);
+                tft.drawLine(x,y,x1,y1,ILI9341_BLACK);
+            }
+        }
+    }
+}
+
 void end(uint16_t &x, uint16_t &y, uint8_t &map) {
   x = random(0,240);
   y = random(0,240);
@@ -385,18 +406,24 @@ void player() {
       else {
         // Serial.println("movingplayer");
         movePlayer();
+        // drawPath();
         delay(100);
         oldX = playerX;
         oldY = playerY;
       }
     }
+    if (solve) {
+      drawPath();
+    }
     if (check_touch()) {
       // send location
       sendRequest(x,y, map);
       read();
+      drawPath();
     }
   }
 }
+
 void processBuffer(const char* buffer,bool &xy, int &counter) {
   if (buffer[0] == 'S') { // if N is read, compute number read
     pathsize = 0;
@@ -427,6 +454,8 @@ void processBuffer(const char* buffer,bool &xy, int &counter) {
 
     Serial.flush();
     Serial.println("A");  // send achknowledgement to server
+    // Serial.print("A ");
+    // Serial.println(buffer);
   }
 }
 
