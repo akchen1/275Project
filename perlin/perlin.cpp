@@ -1,4 +1,4 @@
-#include "Perlin.h"
+#include "perlin.h"
 
 void fill(vector<int> &v) {
 /* Generate a vector of random numbers */

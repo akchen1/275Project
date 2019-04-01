@@ -20,4 +20,5 @@ build-mega2560/arduino_main.o: arduino_main.cpp \
  /usr/share/arduino/libraries/SD/utility/Sd2PinMap.h \
  /usr/share/arduino/libraries/SD/utility/SdInfo.h \
  /usr/share/arduino/libraries/SD/utility/FatStructs.h \
- /usr/share/arduino/libraries/SD/utility/SdFatUtil.h
+ /usr/share/arduino/libraries/SD/utility/SdFatUtil.h \
+ /home/cmput274/arduino-ua/libraries/TouchScreen/TouchScreen.h
