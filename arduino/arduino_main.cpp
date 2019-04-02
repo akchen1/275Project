@@ -382,7 +382,7 @@ bool checkEnd(uint16_t x, uint16_t y) {
 void displayEnd() {
   tft.fillScreen(ILI9341_WHITE);
   tft.setCursor(0, 120);
-  tft.setTextSize(3);
+  tft.setTextSize(2);
   tft.println("You found the treasure!");
   tft.println();
   tft.println("Tap the screen to play again");
