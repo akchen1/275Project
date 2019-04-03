@@ -88,6 +88,8 @@ public:
   // cascade cut will return the adult of the node cut
   fibnode<T, K> * cut(fibnode<T, K> *node, fibnode<T, K> *adult);
   // fibnode<T, K> * cascade_cut(fibnode<T, K> *node);
+  void info(const fibnode<T,K>  *current_node);
+
 
 private:
   unsigned int heapSize;    // number of nodes
@@ -222,9 +224,6 @@ template <typename T, typename K>
 void FibonnaciHeap<T, K>::popMin() {
   // cannot popMin of empty heap
   assert(heapSize != 0);
-  cout << "MIN KEY before pop :" << min->key << endl;
-  cout << "MIN ITEM before pop :" << min->item << endl;
-  cout << "next min item:" << min->next->item << endl;
 
   fibnode<T, K> *poppedMin = min; 
 
@@ -241,12 +240,7 @@ void FibonnaciHeap<T, K>::popMin() {
     (min->prev)->next = min->next;
     (min->next)->prev = min->prev;
     min = min->next;
-    cout << "okey";
     trees--;
-                for(unsigned int i = 0; i < trees; i++) {
-        if(min->parent != NULL) {cout << "okey kids" << endl;}
-        min = min->next;
-  }
 
   }
 
@@ -262,14 +256,6 @@ void FibonnaciHeap<T, K>::popMin() {
 
     trees = min->deg;
     min = current;
-
-    cout << "dokey";
-
-            for(unsigned int i = 0; i < trees; i++) {
-        if(min->parent != NULL) {cout << "dokeys kids" << endl;}
-        min = min->next;
-  }
-
   }
 
   // popped minimum has children
@@ -301,30 +287,12 @@ void FibonnaciHeap<T, K>::popMin() {
     trees += min->deg-1;
     // set arbritrary minimum as last element of the children
     min = current;
-        cout << "artichoke";
-
-            for(unsigned int i = 0; i < trees; i++) {
-        if(min->parent != NULL) {cout << "artichokes kids" << endl;}
-        min = min->next;
-  }
 
 
-  }
-  cout << "AFTER POP MIN before consolidate0 :   " << min->prev->item << endl;
-
-  cout << "AFTER POP MIN before consolidate1 :   " << min->item << endl;
-  cout << "AFTER POP MIN before consolidate2 :   " << min->next->item << endl;
-  cout << "AFTER POP MIN before consolidate3s :   " << min->next->next->item << endl;
-
-    for(unsigned int i = 0; i < trees; i++) {
-        if(min->parent != NULL) {cout << "dont make kids popmin" << endl;}
-        min = min->next;
   }
 
   delete poppedMin;
   heapSize--;
-
-
 
 
   // minimum has been popped so find new minimum and satisfy fib property
@@ -333,8 +301,6 @@ void FibonnaciHeap<T, K>::popMin() {
 
 template <typename T, typename K>
 fibnode<T, K> * FibonnaciHeap<T, K>::cut(fibnode<T, K> *node, fibnode<T, K> *adult) {
-  cout << "entered cut" << endl;
-
 
   node->parent = NULL;
   trees++;
@@ -360,9 +326,6 @@ fibnode<T, K> * FibonnaciHeap<T, K>::cut(fibnode<T, K> *node, fibnode<T, K> *adu
     (node->prev)->next = node->next;
   }
 
-
-  cout << "rooting : " << node->item << endl;
-
   // pop out the node and put into roots
 
   (min->next)->prev = node;
@@ -375,7 +338,6 @@ fibnode<T, K> * FibonnaciHeap<T, K>::cut(fibnode<T, K> *node, fibnode<T, K> *adu
 
 template <typename T, typename K>
 void FibonnaciHeap<T, K>::decreaseKey(fibnode<T,K> *node, K val) {
-  cout << " Running decreaseKey " << endl;
 
   node->key = val;
   fibnode<T, K> *temp = node;
@@ -395,41 +357,23 @@ void FibonnaciHeap<T, K>::decreaseKey(fibnode<T,K> *node, K val) {
     // heap violation cases
     else if(!adult->mark) {    // adult not marked
     // cut out the temp then mark adult (not roots)
-        cout << "cancercut" << endl;
-
       cut(temp, adult);
-        cout << "cancercut" << endl;
 
       break;
     }
 
     else {
     // this case requires recursive cutting thus no break and set temp to adult            
-      cout << "cancer" << endl;
       
       fibnode<T, K> *temp2 = temp;
       cut(temp, adult);   
       temp = adult;
-
-        cout << "cancer" << endl;
 
     }
 
   }
   if (node->key < min->key) {min = node;}
 
-  cout << "afterDECMIN ITEM :" << min->item << endl;
-  cout << "this is next after dec1" << min->next->item << endl;
-  cout << "this is next after dec2" << min->next->next->item << endl;
-
-  cout << "this is next after dec3" << min->next->next->next->item << endl;
-
-  cout << "this is next after dec4" << min->next->next->next->next->item << endl;
-
-  cout << "this is next after dec5" << min->next->next->next->next->next->item << endl;
-
-
-  
 }
 
 // node<T, K> * FibonnaciHeap<T, K>::decrease_key(const K& key) {
@@ -437,8 +381,6 @@ void FibonnaciHeap<T, K>::decreaseKey(fibnode<T,K> *node, K val) {
 
 template <typename T, typename K>
 void FibonnaciHeap<T, K>::Consolidate() {
-  cout << "Trees yo : " << trees << endl;
-
 
   /* THE MINIMUM SHOULD CURRENTLY BE AN ARBITRARY ROOT NODE */
   if(trees == 1) {return;}
@@ -453,7 +395,6 @@ void FibonnaciHeap<T, K>::Consolidate() {
   unsigned int curTrees = trees;
   // consolidate the heap until all nodes before minimum element is satisfied
   for (unsigned i = 0; i < curTrees; i++) {
-    cout << "TREE RIGHT NOW : " << trees << endl;
 
     if(degTable[current->deg] == NULL) {
       degTable[current->deg] = current;
@@ -468,27 +409,12 @@ void FibonnaciHeap<T, K>::Consolidate() {
     }
 
     if(current->key < min->key) {min = current;}
-  for(unsigned int i = 0; i < trees; i++) {
-        if(current->parent != NULL) {cout << "weezy WARNING !!!!!!!!!!!" << endl;}
-        current = min->next;
   }
-  }
-
-  for(unsigned int i = 0; i < trees; i++) {
-        if(current->parent != NULL) {cout << "weezy WARNING !!!!!!!!!!!" << endl;}
-        current = min->next;
-  }
-
-  cout << trees << " tree yike" << endl;
-  cout << " AFTER CONSOLIDATE MINIMUM : " << min->item << endl;
-    cout << " AFTER CONSOLIDATE MINIMUM2 : " << min->next->item << endl;
-
 }
 
 template <typename T, typename K>
 void FibonnaciHeap<T,K>::quickMeld(fibnode<T,K> *target, vector<fibnode<T, K>*> &degTable) {
-  // cout << trees << "baby time" << endl;
-  cout << "quickmelding" << endl;
+
   fibnode<T, K> *root;
   fibnode<T, K> *kid;
 
@@ -507,10 +433,6 @@ void FibonnaciHeap<T,K>::quickMeld(fibnode<T,K> *target, vector<fibnode<T, K>*> 
 
           fibnode<T, K> *what = root;
 
-    for (int i = 0; i < trees; i++) {
-    if(what->parent != NULL) {cout << "i was wrong help" << endl;}
-    what = what->next;
-}
     // pop out the kid
     (kid->next)->prev = kid->prev;
     (kid->prev)->next = kid->next;

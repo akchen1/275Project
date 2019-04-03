@@ -53,6 +53,13 @@ public:
     heapSize = maxDeg = trees = marked = 0;
     min = NULL;
   }
+
+  ~FibonnaciHeap() {
+    while (heapSize > 0) {
+      popMin();
+    }
+  }
+
   // return minimum of heap
   fibnode<T, K> getMin(); 
 
@@ -85,6 +92,7 @@ public:
   fibnode<T, K> * cut(fibnode<T, K> *node, fibnode<T, K> *adult);
   // fibnode<T, K> * cascade_cut(fibnode<T, K> *node);
   void info(const fibnode<T,K>  *current_node);
+
 private:
   unsigned int heapSize;    // number of nodes
   unsigned int maxDeg;      // maximum degree of nodes in heap
@@ -96,11 +104,15 @@ private:
 
 template <typename T, typename K>
 void FibonnaciHeap<T,K>::info(const fibnode<T,K>  *current_node) {
-  cout << current_node->key << " at location "<< &current_node << endl;
-  cout << "my parent is " << &current_node->parent << " " << current_node->key << endl;
-  cout << "my child is " << &current_node->child<< " " << current_node->key << endl;
-  cout << "the next is " << &current_node->next << " " << current_node->key<< endl;
-  cout << "the prev is " << &current_node->prev << " " << current_node->key<< endl;
+  // cout << current_node->key << " at location "<< &current_node << endl;
+  cout << "degree of : " << current_node->deg << endl;
+  // if (current_node->child != NULL) {
+  // cout << "if child : " << current_node->child->key << endl;
+  // }
+  // cout << "my parent is " << &current_node->parent << " " << current_node->key << endl;
+  // cout << "my child is " << &current_node->child<< " " << current_node->key << endl;
+  // cout << "the next is " << &current_node->next << " " << current_node->key<< endl;
+  // cout << "the prev is " << &current_node->prev << " " << current_node->key<< endl;
 }
 
 template <typename T, typename K>
@@ -128,9 +140,9 @@ fibnode<T, K> * FibonnaciHeap<T, K>::insert(const T& item, const K& key) {
 
   // fix circular linked list for 
   else {
-    current_node = new fibnode<T, K>(item, key, min, min->prev);
-    min->prev->next = current_node;
-    min->prev = current_node;
+    current_node = new fibnode<T, K>(item, key, min->next, min);
+    min->next->prev = current_node;
+    min->next = current_node;
   }
 
   // now check if new insertion has smaller key than the current min
@@ -154,11 +166,29 @@ fibnode<T, K> * FibonnaciHeap<T, K>::insert(const T& item, const K& key) {
 
 template <typename T, typename K>
 void FibonnaciHeap<T, K>::popMin() {
+      fibnode<T,K> * node = min;
+
+  for (int i = 0; i< trees; i++) {
+    cout << " -> " << node->key;
+    node = node->next;
+  }
+  cout << endl;
+
+  if (min->child != NULL) {
+    node = min->child;
+    for (int i = 0; i< min->deg; i++) {
+    cout << " -> " << node->key;
+    node = node->next;
+  }
+
+  }
+  cout << endl;
   // cannot popMin of empty heap
   assert(heapSize != 0);
 
   fibnode<T, K> *poppedMin = min; 
   cout << "popping " << min->key << " at location " << &min << endl;
+  info(min);
   // only the root node, delete minimum and decrement counters
   if(heapSize == 1) {
 
@@ -223,6 +253,7 @@ void FibonnaciHeap<T, K>::popMin() {
   delete poppedMin;
   heapSize--;
 
+  cout << " minimum key before consolidate entrance " << min->key << endl;
 
 
 
@@ -328,6 +359,8 @@ void FibonnaciHeap<T, K>::Consolidate() {
   unsigned int curTrees = trees;
   // consolidate the heap until all nodes before minimum element is satisfied
   for (unsigned i = 0; i < curTrees; i++) {
+    // cout << "the ith loop in consolidate : " << i << endl;
+    cout << current->key << " is key current loop i" << endl;
 
     if(current->key < min->key) {min = current;}
 
@@ -347,7 +380,6 @@ void FibonnaciHeap<T, K>::Consolidate() {
 
 template <typename T, typename K>
 void FibonnaciHeap<T,K>::quickMeld(fibnode<T,K> *target, vector<fibnode<T, K>*> &degTable) {
-  cout << "in quickMeld" << endl;
   fibnode<T, K> *root;
   fibnode<T, K> *kid;
   while(true) {
@@ -362,23 +394,27 @@ void FibonnaciHeap<T,K>::quickMeld(fibnode<T,K> *target, vector<fibnode<T, K>*> 
       kid = target;
     }
 
+    if (min == kid) {min = root;}
     // pop out the kid
     (kid->next)->prev = kid->prev;
     (kid->prev)->next = kid->next;
     
+    cout << " I am using " << root->key << " to childize " << kid->key << endl;
+
+
     // cases for making kid
     if(root->child == NULL) {
       cout << "bha" << endl;
       if (root->parent) {cout << "PROBLEM" << endl;}
-      info(root);
+      // info(root);
       root->child = kid;
       kid->parent = root;
       kid->next = kid;
       kid->prev = kid;
-      cout << "kid" << endl;
-      info(kid);
-      cout << "root" << endl;
-      info(root);
+      // cout << "kid" << endl;
+      // info(kid);
+      // cout << "root" << endl;
+      // info(root);
       if (root->parent) {cout << "PROBLEM" << endl;}
     }
     else {

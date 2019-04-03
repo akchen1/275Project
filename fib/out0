@@ -1,0 +1,16 @@
+popping 2 at location 0xbfaf33d8
+degree of : 0
+in quickMeld
+degree of : 0
+bha
+popping 3 at location 0xbfaf33d8
+degree of : 1
+if child5
+in quickMeld
+degree of : 0
+bha
+popping 4 at location 0xbfaf33d8
+degree of : 1
+if child5
+popping 5 at location 0xbfaf33d8
+degree of : 0
