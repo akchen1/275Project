@@ -66,22 +66,22 @@ void generateNoise(unordered_map<pointData, pair<int, int>, pointHash> &vertex, 
         // double n = 20 * noise(x, y, 0.8, perm);
         // n = n - floor(n);
         n = abs(n);
-        if (n < 0.1) {
-          node.x = i;
-          node.y = j;
-          vertex.insert({node, make_pair(key, 0)});
-          key++;
-        }
-        else if (n < 0.2) {
+        if (n < 0.1) {  //ground
           node.x = i;
           node.y = j;
           vertex.insert({node, make_pair(key, 1)});
           key++;
         }
-        else if (n < 0.3) {
+        else if (n < 0.2) { //green
           node.x = i;
           node.y = j;
           vertex.insert({node, make_pair(key, 2)});
+          key++;
+        }
+        else if (n < 0.3) { //ater
+          node.x = i;
+          node.y = j;
+          vertex.insert({node, make_pair(key, 3)});
           key++;
         }
 
@@ -210,6 +210,7 @@ void findEdge(WDigraph &graph,const unordered_map<pointData, pair<int,int>, poin
     if (find != vertex.end()) {
       // cout << "point to the left" << endl;
       graph.addEdge(i.second.first, vertex.at(p).first, i.second.second+vertex.at(p).second);
+      // cout << i.second.second+vertex.at(p).second << endl;
     }
     p.x = i.first.x + 5;
     p.y = i.first.y;
@@ -217,6 +218,7 @@ void findEdge(WDigraph &graph,const unordered_map<pointData, pair<int,int>, poin
     if (find != vertex.end()) {
       // cout << "point to the right" << endl;
       graph.addEdge(i.second.first, vertex.at(p).first, i.second.second+vertex.at(p).second);
+      // cout << i.second.second+vertex.at(p).second << endl;
     }
     p.x = i.first.x;
     p.y = i.first.y + 5;
@@ -224,6 +226,7 @@ void findEdge(WDigraph &graph,const unordered_map<pointData, pair<int,int>, poin
     if (find != vertex.end()) {
       // cout << "point to the bottom" << endl;
       graph.addEdge(i.second.first, vertex.at(p).first, i.second.second+vertex.at(p).second);
+      // cout << i.second.second+vertex.at(p).second << endl;
     }
     p.x = i.first.x;
     p.y = i.first.y - 5;
@@ -231,6 +234,7 @@ void findEdge(WDigraph &graph,const unordered_map<pointData, pair<int,int>, poin
     if (find != vertex.end()) {
       // cout << "point to the top" << endl;
       graph.addEdge(i.second.first, vertex.at(p).first, i.second.second+vertex.at(p).second);
+      // cout << i.second.second+vertex.at(p).second << endl;
     }
     p.x = i.first.x - 5;
     p.y = i.first.y - 5;
@@ -238,6 +242,7 @@ void findEdge(WDigraph &graph,const unordered_map<pointData, pair<int,int>, poin
     if (find != vertex.end()) {
       // cout << "point to the top-left" << endl;
       graph.addEdge(i.second.first, vertex.at(p).first, i.second.second+vertex.at(p).second);
+      // cout << i.second.second+vertex.at(p).second << endl;
     }
     p.x = i.first.x + 5;
     p.y = i.first.y - 5;
@@ -245,6 +250,7 @@ void findEdge(WDigraph &graph,const unordered_map<pointData, pair<int,int>, poin
     if (find != vertex.end()) {
       // cout << "point to the top-right" << endl;
       graph.addEdge(i.second.first, vertex.at(p).first, i.second.second+vertex.at(p).second);
+      // cout << i.second.second+vertex.at(p).second << endl;
     }
     p.x = i.first.x - 5;
     p.y = i.first.y + 5;
@@ -252,6 +258,7 @@ void findEdge(WDigraph &graph,const unordered_map<pointData, pair<int,int>, poin
     if (find != vertex.end()) {
       // cout << "point to the bottom-left" << endl;
       graph.addEdge(i.second.first, vertex.at(p).first, i.second.second+vertex.at(p).second);
+      // cout << i.second.second+vertex.at(p).second << endl;
     }
     p.x = i.first.x + 5;
     p.y = i.first.y + 5;
@@ -259,7 +266,9 @@ void findEdge(WDigraph &graph,const unordered_map<pointData, pair<int,int>, poin
     if (find != vertex.end()) {
       // cout << "point to the bottom-right" << endl;
       graph.addEdge(i.second.first, vertex.at(p).first, i.second.second+vertex.at(p).second);
+      // cout << i.second.second+vertex.at(p).second << endl;
     }
+
   }
 }
 
@@ -267,7 +276,15 @@ list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash>
   unordered_map<int, PLI> searchTree;
   // int start_vertex = closest_point(nodes, start); // start_vertex vertex
   // int end_vertex = closest_point(nodes, end);  // end vertex
-  dijkstra(graph, start, searchTree); // get path from dijkstra
+  //dijkstra(graph, start, searchTree); // get path from dijkstra
+  list<int> vertexes;
+
+  for(auto i : vertex) {
+    vertexes.push_front(i.second.first);
+  }
+  
+  dijkstra(graph, start, searchTree);
+  // fibDijkstra(graph, start, end, searchTree, vertexes); // get path from dijkstra
 
   list<int> path;
   list<pointData> path1;

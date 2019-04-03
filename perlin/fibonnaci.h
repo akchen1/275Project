@@ -84,6 +84,8 @@ public:
 
   void Consolidate();
 
+  unsigned int size();
+
   // Decrease the key of the node to value
   void decreaseKey(fibnode<T,K> * node, K val);
 
@@ -103,9 +105,14 @@ private:
 };
 
 template <typename T, typename K>
+unsigned int FibonnaciHeap<T,K>::size() {
+  return heapSize;
+}
+
+template <typename T, typename K>
 void FibonnaciHeap<T,K>::info(const fibnode<T,K>  *current_node) {
   // cout << current_node->key << " at location "<< &current_node << endl;
-  cout << "degree of : " << current_node->deg << endl;
+  // cout << "degree of : " << current_node->deg << endl;
   // if (current_node->child != NULL) {
   // cout << "if child : " << current_node->child->key << endl;
   // }
@@ -177,7 +184,7 @@ void FibonnaciHeap<T, K>::popMin() {
   if (min->child != NULL) {
     node = min->child;
     for (int i = 0; i< min->deg; i++) {
-    cout << " -> " << node->key;
+    // cout << " -> " << node->key;
     node = node->next;
   }
 
@@ -187,7 +194,7 @@ void FibonnaciHeap<T, K>::popMin() {
   assert(heapSize != 0);
 
   fibnode<T, K> *poppedMin = min; 
-  cout << "popping " << min->key << " at location " << &min << endl;
+  // cout << "popping " << min->key << " at location " << &min << endl;
   info(min);
   // only the root node, delete minimum and decrement counters
   if(heapSize == 1) {
@@ -253,7 +260,7 @@ void FibonnaciHeap<T, K>::popMin() {
   delete poppedMin;
   heapSize--;
 
-  cout << " minimum key before consolidate entrance " << min->key << endl;
+  // cout << " minimum key before consolidate entrance " << min->key << endl;
 
 
 
@@ -301,12 +308,12 @@ fibnode<T, K> * FibonnaciHeap<T, K>::cut(fibnode<T, K> *node, fibnode<T, K> *adu
 
 template <typename T, typename K>
 void FibonnaciHeap<T, K>::decreaseKey(fibnode<T,K> * node, K val) {
-  cout << " Running decreaseKey " << endl;
+  // cout << " Running decreaseKey " << endl;
 
   node->key = val;
 
   while (true) {
-    cout << " Loop counts " << endl;  
+    // cout << " Loop counts " << endl;  
     fibnode<T, K> *adult = node->parent;
 
     if(adult == NULL) {                                   // no parent case
@@ -360,7 +367,7 @@ void FibonnaciHeap<T, K>::Consolidate() {
   // consolidate the heap until all nodes before minimum element is satisfied
   for (unsigned i = 0; i < curTrees; i++) {
     // cout << "the ith loop in consolidate : " << i << endl;
-    cout << current->key << " is key current loop i" << endl;
+    // cout << current->key << " is key current loop i" << endl;
 
     if(current->key < min->key) {min = current;}
 
@@ -399,13 +406,13 @@ void FibonnaciHeap<T,K>::quickMeld(fibnode<T,K> *target, vector<fibnode<T, K>*> 
     (kid->next)->prev = kid->prev;
     (kid->prev)->next = kid->next;
     
-    cout << " I am using " << root->key << " to childize " << kid->key << endl;
+    // cout << " I am using " << root->key << " to childize " << kid->key << endl;
 
 
     // cases for making kid
     if(root->child == NULL) {
-      cout << "bha" << endl;
-      if (root->parent) {cout << "PROBLEM" << endl;}
+      // cout << "bha" << endl;
+      // if (root->parent) {cout << "PROBLEM" << endl;}
       // info(root);
       root->child = kid;
       kid->parent = root;
@@ -415,7 +422,7 @@ void FibonnaciHeap<T,K>::quickMeld(fibnode<T,K> *target, vector<fibnode<T, K>*> 
       // info(kid);
       // cout << "root" << endl;
       // info(root);
-      if (root->parent) {cout << "PROBLEM" << endl;}
+      // if (root->parent) {cout << "PROBLEM" << endl;}
     }
     else {
       (root->child)->prev = kid;
@@ -452,7 +459,7 @@ void FibonnaciHeap<T,K>::quickMeld(fibnode<T,K> *target, vector<fibnode<T, K>*> 
     }
 
   } 
-  if (root->parent) {cout << "PROBLEM!" << endl;}
+  // if (root->parent) {cout << "PROBLEM!" << endl;}
 }
 
 

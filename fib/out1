@@ -1,0 +1,79 @@
+popping 0 at location 0xbfd43d28
+in quickMeld
+bha
+1 at location 0xbfd43c44
+my parent is 0x8699ed8 1
+my child is 0x8699edc 1
+the next is 0x8699ee0 1
+the prev is 0x8699ee4 1
+kid
+2 at location 0xbfd43c44
+my parent is 0x8699e78 2
+my child is 0x8699e7c 2
+the next is 0x8699e80 2
+the prev is 0x8699e84 2
+root
+1 at location 0xbfd43c44
+my parent is 0x8699ed8 1
+my child is 0x8699edc 1
+the next is 0x8699ee0 1
+the prev is 0x8699ee4 1
+in quickMeld
+bha
+3 at location 0xbfd43c44
+my parent is 0x8699e18 3
+my child is 0x8699e1c 3
+the next is 0x8699e20 3
+the prev is 0x8699e24 3
+kid
+5 at location 0xbfd43c44
+my parent is 0x8699e48 5
+my child is 0x8699e4c 5
+the next is 0x8699e50 5
+the prev is 0x8699e54 5
+root
+3 at location 0xbfd43c44
+my parent is 0x8699e18 3
+my child is 0x8699e1c 3
+the next is 0x8699e20 3
+the prev is 0x8699e24 3
+in quickMeld
+bha
+58 at location 0xbfd43c44
+my parent is 0x8699f08 58
+my child is 0x8699f0c 58
+the next is 0x8699f10 58
+the prev is 0x8699f14 58
+kid
+59 at location 0xbfd43c44
+my parent is 0x8699ea8 59
+my child is 0x8699eac 59
+the next is 0x8699eb0 59
+the prev is 0x8699eb4 59
+root
+58 at location 0xbfd43c44
+my parent is 0x8699f08 58
+my child is 0x8699f0c 58
+the next is 0x8699f10 58
+the prev is 0x8699f14 58
+in quickMeld
+bha
+77 at location 0xbfd43c44
+my parent is 0x8699f38 77
+my child is 0x8699f3c 77
+the next is 0x8699f40 77
+the prev is 0x8699f44 77
+kid
+493 at location 0xbfd43c44
+my parent is 0x8699f68 493
+my child is 0x8699f6c 493
+the next is 0x8699f70 493
+the prev is 0x8699f74 493
+root
+77 at location 0xbfd43c44
+my parent is 0x8699f38 77
+my child is 0x8699f3c 77
+the next is 0x8699f40 77
+the prev is 0x8699f44 77
+popping 1 at location 0xbfd43d28
+popping 2 at location 0xbfd43d28    // popping 2 should 
