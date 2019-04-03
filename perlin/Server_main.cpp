@@ -61,7 +61,7 @@ void generateNoise(unordered_map<pointData, pair<int, int>, pointHash> &vertex, 
         double x = (double) i/ ((double) MAP_WIDTH);
         double y = (double) j/ ((double) MAP_HEIGHT);
 
-        double n = noise( 0.5*x,  0.5*y, 0.8, perm);
+        double n = noise( 20*x,  20*y, 0.8, perm);
 
         // double n = 20 * noise(x, y, 0.8, perm);
         // n = n - floor(n);

@@ -96,18 +96,32 @@ void setup() {
 
 void drawButtons() {
   // draw top right box for rating selector
-  tft.fillRect(MAP_WIDTH + 1, 0, DISPLAY_WIDTH - MAP_WIDTH, DISPLAY_HEIGHT-1, ILI9341_BLUE);
-  tft.drawRect(MAP_WIDTH + 1, 0, DISPLAY_WIDTH - MAP_WIDTH-1, DISPLAY_HEIGHT, ILI9341_RED);
-  // tft.drawRect(DISPLAY_WIDTH - 47, 2, 46, (DISPLAY_HEIGHT-1)/2-2, ILI9341_RED);
+  tft.fillRect(MAP_WIDTH, 1, DISPLAY_WIDTH - MAP_WIDTH, (DISPLAY_HEIGHT-1)/2, ILI9341_WHITE);
+  tft.drawRect(MAP_WIDTH, 1, DISPLAY_WIDTH - MAP_WIDTH, (DISPLAY_HEIGHT-1)/2, ILI9341_RED);
   
-  tft.setCursor(290, 160);
+  tft.setTextSize(3);
+  tft.setTextColor(0x0000, 0xFFFF);
+  tft.setCursor(290, 45);
+
+  // draw sorting cycle option (lower right)
+  tft.fillRect(MAP_WIDTH, (DISPLAY_HEIGHT-1)/2 + 4, DISPLAY_WIDTH - MAP_WIDTH, (DISPLAY_HEIGHT-1)/2 - 4, ILI9341_WHITE);
+  tft.drawRect(MAP_WIDTH, (DISPLAY_HEIGHT-1)/2 + 2, DISPLAY_WIDTH - MAP_WIDTH, (DISPLAY_HEIGHT-1)/2, ILI9341_GREEN);
+  
+
+  // tft.setCursor(290, 160);
   tft.setTextSize(2);
-  tft.drawChar(MAP_WIDTH + (DISPLAY_WIDTH - MAP_WIDTH)/2, 132, 'S', ILI9341_BLACK, ILI9341_BLUE, 2);
-  tft.drawChar(MAP_WIDTH + (DISPLAY_WIDTH - MAP_WIDTH)/2, 152, 'O', ILI9341_BLACK, ILI9341_BLUE, 2);
-  tft.drawChar(MAP_WIDTH + (DISPLAY_WIDTH - MAP_WIDTH)/2, 172, 'L', ILI9341_BLACK, ILI9341_BLUE, 2);
-  tft.drawChar(MAP_WIDTH + (DISPLAY_WIDTH - MAP_WIDTH)/2, 192, 'V', ILI9341_BLACK, ILI9341_BLUE, 2);
-  tft.drawChar(MAP_WIDTH + (DISPLAY_WIDTH - MAP_WIDTH)/2, 212, 'E', ILI9341_BLACK, ILI9341_BLUE, 2);
-}  
+
+
+  tft.drawChar(MAP_WIDTH+35, 40, 'N', ILI9341_BLACK, ILI9341_WHITE, 2);
+  tft.drawChar(MAP_WIDTH+35, 60, 'E', ILI9341_BLACK, ILI9341_WHITE, 2);
+  tft.drawChar(MAP_WIDTH+35, 80, 'W', ILI9341_BLACK, ILI9341_WHITE, 2);
+
+  tft.drawChar(MAP_WIDTH+35, 132, 'S', ILI9341_BLACK, ILI9341_WHITE, 2);
+  tft.drawChar(MAP_WIDTH+35, 152, 'O', ILI9341_BLACK, ILI9341_WHITE, 2);
+  tft.drawChar(MAP_WIDTH+35, 172, 'L', ILI9341_BLACK, ILI9341_WHITE, 2);
+  tft.drawChar(MAP_WIDTH+35, 192, 'V', ILI9341_BLACK, ILI9341_WHITE, 2);
+  tft.drawChar(MAP_WIDTH+35, 212, 'E', ILI9341_BLACK, ILI9341_WHITE, 2);
+}
 
 uint8_t convert_y_mapnumber(uint8_t number) {
   uint8_t newlevel = 4;
@@ -136,16 +150,22 @@ void sendRequest(uint16_t x, uint16_t y, uint8_t map) {
   solve = true;
 }
 
-bool check_touch() {
+int check_touch() {
 /* check where the map is touched*/
 
     TSPoint p = ts.getPoint();
     if (p.z < MINPRESSURE || p.z > MAXPRESSURE) {
-        return false;
+        return 0;
     }
     int screen_x = map(p.y, TS_MINY, TS_MAXY, DISPLAY_WIDTH, 0);
+    int screen_y = map(p.x, TS_MINY, TS_MAXY, DISPLAY_HEIGHT, 0);
     if (screen_x >= MAP_WIDTH) {   // if touch in map
-        return true;                       // condition for map touch
+      if (screen_y >= (DISPLAY_HEIGHT-1)/2) {
+        return 1;
+      }
+      else {
+        return 2;                       // condition for map touch
+      }
     }
 }
 
@@ -281,11 +301,14 @@ void drawPath() {
 }
 
 void end(uint16_t &x, uint16_t &y, uint8_t &map) {
-  // x = random(0,240);
-  // y = random(0,240);
-  // map = random(1, 26);
-  x = 400;
-  y = 400;
+  randomSeed(analogRead(4));
+  x = random(0,240);
+  y = random(0,240);
+  map = random(1, 26);
+  // x = 200;
+  // y = 200;
+  // map = 1;
+
   // x = floor(constrain(x / 5, 0, 47));
   // y = floor(constrain(y / 5, 0, 47));
 }
@@ -345,7 +368,37 @@ void movePlayer() {
     colorMap(val, 5*x_center,5*y_center, 5 );
   }
   tft.fillCircle(playerX, playerY, 2, ILI9341_RED);
+}
 
+bool checkEnd(uint16_t x, uint16_t y) {
+
+  if (abs(playerX-x) < 2) {
+    if (abs(playerY-y) < 2) {
+      return true;
+    }
+  }
+  return false;
+}
+
+void displayEnd() {
+  tft.fillScreen(ILI9341_WHITE);
+  tft.setCursor(0, 120);
+  tft.setTextSize(2);
+  tft.println("You found the treasure!");
+  tft.println();
+  tft.println("Tap the screen to play again");
+  bool touch = false;
+  while (!touch) {
+    TSPoint p = ts.getPoint();
+    if (p.z < MINPRESSURE || p.z > MAXPRESSURE) {
+      touch = false;
+    }
+    else {
+      touch = true;
+    }
+  }
+  generateMap();
+  drawButtons();
 }
 
 void player() {
@@ -395,10 +448,6 @@ void player() {
       playerY = MAP_HEIGHT - 5;
     }
 
-    if (map_number == map) {
-      tft.fillRect(x, y, 4, 4, ILI9341_RED);
-    }
-
     if (playerMove) {
       // Serial.println("checking height");
       if (!checkHeight()) {
@@ -414,15 +463,29 @@ void player() {
         oldY = playerY;
       }
     }
+
+    if (map_number == map) {
+      tft.fillRect(x, y, 4, 4, ILI9341_RED);
+      if(checkEnd(x,y)) {
+        displayEnd();
+        end(x,y,map);
+      }
+    }
+
     if (solve) {
       drawPath();
     }
-    if (check_touch()) {
+    if (check_touch() == 1) {
+      end(x, y, map);
+      delay(100);
+    }
+    else if (check_touch() == 2) {
       // send location
       sendRequest(x,y, map);
       read();
       drawPath();
     }
+
   }
 }
 
