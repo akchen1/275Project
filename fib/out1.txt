@@ -1,0 +1,162 @@
+popping 0 at location 0xbff49c50
+in quickMeld
+bha
+1 at location 0xbff49b44
+my parent is 0x9f32ff8 1
+my child is 0x9f32ffc 1
+the next is 0x9f33000 1
+the prev is 0x9f33004 1
+kid
+2 at location 0xbff49b44
+my parent is 0x9f32e78 2
+my child is 0x9f32e7c 2
+the next is 0x9f32e80 2
+the prev is 0x9f32e84 2
+root
+1 at location 0xbff49b44
+my parent is 0x9f32ff8 1
+my child is 0x9f32ffc 1
+the next is 0x9f33000 1
+the prev is 0x9f33004 1
+in quickMeld
+bha
+5 at location 0xbff49b44
+my parent is 0x9f32e18 5
+my child is 0x9f32e1c 5
+the next is 0x9f32e20 5
+the prev is 0x9f32e24 5
+kid
+6 at location 0xbff49b44
+my parent is 0x9f32e48 6
+my child is 0x9f32e4c 6
+the next is 0x9f32e50 6
+the prev is 0x9f32e54 6
+root
+5 at location 0xbff49b44
+my parent is 0x9f32e18 5
+my child is 0x9f32e1c 5
+the next is 0x9f32e20 5
+the prev is 0x9f32e24 5
+in quickMeld
+bha
+3 at location 0xbff49b44
+my parent is 0x9f32ed8 3
+my child is 0x9f32edc 3
+the next is 0x9f32ee0 3
+the prev is 0x9f32ee4 3
+kid
+10 at location 0xbff49b44
+my parent is 0x9f32ea8 10
+my child is 0x9f32eac 10
+the next is 0x9f32eb0 10
+the prev is 0x9f32eb4 10
+root
+3 at location 0xbff49b44
+my parent is 0x9f32ed8 3
+my child is 0x9f32edc 3
+the next is 0x9f32ee0 3
+the prev is 0x9f32ee4 3
+in quickMeld
+bha
+8 at location 0xbff49b44
+my parent is 0x9f32f08 8
+my child is 0x9f32f0c 8
+the next is 0x9f32f10 8
+the prev is 0x9f32f14 8
+kid
+11 at location 0xbff49b44
+my parent is 0x9f32f38 11
+my child is 0x9f32f3c 11
+the next is 0x9f32f40 11
+the prev is 0x9f32f44 11
+root
+8 at location 0xbff49b44
+my parent is 0x9f32f08 8
+my child is 0x9f32f0c 8
+the next is 0x9f32f10 8
+the prev is 0x9f32f14 8
+in quickMeld
+bha
+15 at location 0xbff49b44
+my parent is 0x9f32f68 15
+my child is 0x9f32f6c 15
+the next is 0x9f32f70 15
+the prev is 0x9f32f74 15
+kid
+90 at location 0xbff49b44
+my parent is 0x9f32f98 90
+my child is 0x9f32f9c 90
+the next is 0x9f32fa0 90
+the prev is 0x9f32fa4 90
+root
+15 at location 0xbff49b44
+my parent is 0x9f32f68 15
+my child is 0x9f32f6c 15
+the next is 0x9f32f70 15
+the prev is 0x9f32f74 15
+in quickMeld
+bha
+124 at location 0xbff49b44
+my parent is 0x9f32fc8 124
+my child is 0x9f32fcc 124
+the next is 0x9f32fd0 124
+the prev is 0x9f32fd4 124
+kid
+23423 at location 0xbff49b44
+my parent is 0x9f33028 23423
+my child is 0x9f3302c 23423
+the next is 0x9f33030 23423
+the prev is 0x9f33034 23423
+root
+124 at location 0xbff49b44
+my parent is 0x9f32fc8 124
+my child is 0x9f32fcc 124
+the next is 0x9f32fd0 124
+the prev is 0x9f32fd4 124
+popping 1 at location 0xbff49c50
+in quickMeld
+bha
+2 at location 0xbff49b44
+my parent is 0x9f32e78 2
+my child is 0x9f32e7c 2
+the next is 0x9f32e80 2
+the prev is 0x9f32e84 2
+kid
+23532325 at location 0xbff49b44
+my parent is 0x9f33088 23532325
+my child is 0x9f3308c 23532325
+the next is 0x9f33090 23532325
+the prev is 0x9f33094 23532325
+root
+2 at location 0xbff49b44
+my parent is 0x9f32e78 2
+my child is 0x9f32e7c 2
+the next is 0x9f32e80 2
+the prev is 0x9f32e84 2
+in quickMeld
+in quickMeld
+popping 2 at location 0xbff49c50
+popping 3 at location 0xbff49c50
+in quickMeld
+bha
+10 at location 0xbff49b44
+my parent is 0x9f32ea8 10
+my child is 0x9f32eac 10
+the next is 0x9f32eb0 10
+the prev is 0x9f32eb4 10
+kid
+23532325 at location 0xbff49b44
+my parent is 0x9f33088 23532325
+my child is 0x9f3308c 23532325
+the next is 0x9f33090 23532325
+the prev is 0x9f33094 23532325
+root
+10 at location 0xbff49b44
+my parent is 0x9f32ea8 10
+my child is 0x9f32eac 10
+the next is 0x9f32eb0 10
+the prev is 0x9f32eb4 10
+in quickMeld
+popping 5 at location 0xbff49c50
+in quickMeld
+popping 6 at location 0xbff49c50
