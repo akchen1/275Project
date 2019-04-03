@@ -281,9 +281,11 @@ void drawPath() {
 }
 
 void end(uint16_t &x, uint16_t &y, uint8_t &map) {
-  x = random(0,240);
-  y = random(0,240);
-  map = random(1, 26);
+  // x = random(0,240);
+  // y = random(0,240);
+  // map = random(1, 26);
+  x = 400;
+  y = 400;
   // x = floor(constrain(x / 5, 0, 47));
   // y = floor(constrain(y / 5, 0, 47));
 }
