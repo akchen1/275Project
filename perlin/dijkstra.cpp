@@ -22,6 +22,7 @@ using namespace std;
 
 typedef pair<long long, int> PLI;
 typedef pair<int, int> PII;
+typedef pair<long long, long long> PLL;
 
 void fibdijkstra(const WDigraph& graph, int startVertex, unordered_map<int, PLI>& tree, list<int> &vertex) {
 

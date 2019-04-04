@@ -9,7 +9,7 @@ all: Server_main
 Server_main: Server_main.o digraph.o serialport.o dijkstra.o
 	$(CC) Server_main.o digraph.o serialport.o dijkstra.o -o Server_main $(LFLAGS)
 
-Server_main.o: Server_main.cpp digraph.cpp digraph.h wdigraph.h astar.h server_util.h
+Server_main.o: Server_main.cpp digraph.cpp digraph.h wdigraph.h astar.h server_util.h fibonnaci.h
 	$(CC) Server_main.cpp -o Server_main.o $(CFLAGS)
 
 digraph.o: digraph.cpp digraph.h
