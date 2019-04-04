@@ -12,8 +12,11 @@
 #include <random>
 #include <cmath>
 #include <list>
+
 #include "astar.h"
 #include "server_util.h"
+#include <ctime>
+
 
 using namespace std;
 
@@ -267,18 +270,35 @@ void findEdge(WDigraph &graph,const unordered_map<pointData, pair<int,int>, poin
 
 list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash> vertex, const WDigraph graph, const int start, const int end) {
   unordered_map<int, PLI> searchTree;
+  unordered_map<int, PLI> binarySearchTree;
+  clock_t start_time;
+  double length;
   // int start_vertex = closest_point(nodes, start); // start_vertex vertex
   // int end_vertex = closest_point(nodes, end);  // end vertex
   //dijkstra(graph, start, searchTree); // get path from dijkstra
   list<int> vertexes;
 
+
   for(auto i : vertex) {
     vertexes.push_front(i.second.first);
   }
   
+
   // dijkstra(graph, start, searchTree);
   // fibDijkstra(graph, start, end, searchTree, vertexes); // get path from dijkstra
   astar(start, end, vertex,graph);
+
+  start_time = clock();
+  bdijkstra(graph, start, binarySearchTree);
+  length = (clock() - start_time) / (double) CLOCKS_PER_SEC;
+  cout << "The Binary Heap Dijkstra's Running Time : " << length << endl;
+
+  start_time = clock();
+  fibdijkstra(graph, start, searchTree, vertexes); // get path from dijkstra
+  length = (clock() - start_time) / (double) CLOCKS_PER_SEC;
+  cout << "The Fibonnaci Heap Dijkstra's Running Time : " << length << endl;
+
+
   list<int> path;
   list<pointData> path1;
 
@@ -317,12 +337,7 @@ int main() {
     readFile(noise);
     generateNoise(vertex, noise, graph);
     findEdge(graph, vertex);
-    // for (auto i : vertex) {
-    //   if (graph.numNeighbours(i.second.first) == 0) {
-    //     cout << "no numNeighbours" << endl;
-    //   }
-    //   else {cout << "no" << endl;}
-    // }
+   
     string line = waitRequest();
     pointData start, end;
     processRequest(line, start, end);
