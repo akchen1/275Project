@@ -268,9 +268,12 @@ void findEdge(WDigraph &graph,const unordered_map<pointData, pair<int,int>, poin
   }
 }
 
-list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash> vertex, const WDigraph graph, const int start, const int end) {
+list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash> vertex, const WDigraph graph, const int start, const int end,
+  const pointData startCoords, const pointData endCoords) {
   unordered_map<int, PLI> searchTree;
   unordered_map<int, PLI> binarySearchTree;
+
+
   clock_t start_time;
   double length;
   // int start_vertex = closest_point(nodes, start); // start_vertex vertex
@@ -289,17 +292,23 @@ list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash>
   // astar(start, end, vertex,graph);
 
 
-  
-  
-  start_time = clock();
-  bdijkstra(graph, start, binarySearchTree);
-  length = (clock() - start_time) / (double) CLOCKS_PER_SEC;
-  cout << "The Binary Heap Dijkstra's Running Time : " << length << endl;
+  // start_time = clock();
+  // bdijkstra(graph, start, binarySearchTree);
+  // length = (clock() - start_time) / (double) CLOCKS_PER_SEC;
+  // cout << "The Binary Heap Dijkstra's Running Time : " << length << endl;
 
+
+  
+  
   start_time = clock();
-  fibdijkstra(graph, start, searchTree, vertexes); // get path from dijkstra
+  fibdijkstra(graph, start, binarySearchTree, vertexes); // get path from dijkstra
   length = (clock() - start_time) / (double) CLOCKS_PER_SEC;
   cout << "The Fibonnaci Heap Dijkstra's Running Time : " << length << endl;
+
+  start_time = clock();
+  fibstar(start, end, vertex, graph, searchTree, startCoords, endCoords); // get path from dijkstra
+  length = (clock() - start_time) / (double) CLOCKS_PER_SEC;
+  cout << "The FibStar Running Time : " << length << endl;
 
   list<int> path;
   list<pointData> path1;
@@ -310,7 +319,6 @@ list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash>
   }
   else {
     int stepping = end;
-    
     while (stepping != start) {
       path.push_front(stepping);
 
@@ -350,6 +358,7 @@ int main() {
       communicate(path);
     }
     
+
 
     
     return 0;
