@@ -17,13 +17,17 @@ int key, val;
     cin >> type;
     if (type == 'I') {
       cin >> key >> val;
-      heap.insert(key,val);
+      vertex_map[val] = heap.insert(key,val);
     }
     else if (type == 'P') {
       heap.popMin();
     }
     else if (type == 'M') {
       heap.getMin();
+    }
+    else if (type == 'D') {
+      cin >> val;
+      heap.decreaseKey(vertex_map[val], 0);
     }
   }
   return 0;
