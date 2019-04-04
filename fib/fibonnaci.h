@@ -179,10 +179,10 @@ void FibonnaciHeap<T, K>::popMin() {
       fibnode<T,K> * node = min;
 
   for (int i = 0; i< trees; i++) {
-    cout << " -> " << node->key;
+    // cout << " -> " << node->key;
     node = node->next;
   }
-  cout << endl;
+  // cout << endl;
 
   if (min->child != NULL) {
     node = min->child;
@@ -192,13 +192,13 @@ void FibonnaciHeap<T, K>::popMin() {
   }
 
   }
-  cout << endl;
+  // cout << endl;
 
   // cannot popMin of empty heap
   assert(heapSize != 0);
 
   fibnode<T, K> *poppedMin = min; 
-  cout << min->key << " this is the key" << endl;
+  // cout << min->key << " this is the key" << endl;
   // cout << "popping " << min->key << " at location " << &min << endl;
   info(min);
   // only the root node, delete minimum and decrement counters
@@ -338,7 +338,7 @@ fibnode<T, K> * FibonnaciHeap<T, K>::cascade_cut(fibnode<T, K> *node, fibnode<T,
 
 template <typename T, typename K>
 void FibonnaciHeap<T, K>::decreaseKey(fibnode<T,K> * node, K val) {
-  cout << " Running decreaseKey " << endl;
+  // cout << " Running decreaseKey " << endl;
 
   node->key = val;
 
@@ -357,7 +357,7 @@ void FibonnaciHeap<T, K>::decreaseKey(fibnode<T,K> * node, K val) {
 
   // heap violation cases
   else if(node->key < adult->key && !adult->mark) {    // adult not marked
-    cout << "during cut" << endl;
+    // cout << "during cut" << endl;
   // cut out the node then mark adult (not roots)
     cut(node, adult);
     if (node->key < min->key) {min = node;}
@@ -365,7 +365,7 @@ void FibonnaciHeap<T, K>::decreaseKey(fibnode<T,K> * node, K val) {
 
   else {
   // this case requires recursive cutting thus no break and set node to adult   
-    cout << "CASCADING" << endl;                     
+    // cout << "CASCADING" << endl;                     
     cascade_cut(node, adult);
     if (node->key < min->key) {min = node;}
   }
