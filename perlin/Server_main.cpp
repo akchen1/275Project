@@ -116,27 +116,27 @@ void communicate(list<pointData> path) {
   Serial.writeline("\n");
   confirm = wait_confirmation(1000);
   if (!confirm) {
-        cout << "error" << endl;
-        // return;
+    cout << "error" << endl;
+    return;
   }
   for (auto i : path) {
-    cout << i.x << " " << i.y << endl;
+    // cout << i.x << " " << i.y << endl;
     Serial.writeline(to_string(i.x));
     Serial.writeline("\n");
     confirm = wait_confirmation(1000);
     if (!confirm) {
-        cout << "error" << endl;
-        // return;
+      cout << "error" << endl;
+      return;
     }
     Serial.writeline(to_string(i.y));
     Serial.writeline("\n");
     confirm = wait_confirmation(1000);
     if (!confirm) {
-        cout << "error" << endl;
-        // return;
+      cout << "error" << endl;
+      return;
     }
   }
-  cout <<"sending E" <<endl;
+  // cout <<"sending E" <<endl;
   Serial.writeline("E\n");
 }
 
@@ -189,7 +189,7 @@ string waitRequest() {
   string line;
   do {
     line = Serial.readline();
-    cout << "recieved " << line << endl;
+    // cout << "recieved " << line << endl;
   } while (line.substr(0,1) != "R");
   // cout << "recieved" << endl;
   return line;
@@ -286,8 +286,11 @@ list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash>
 
   // dijkstra(graph, start, searchTree);
   // fibDijkstra(graph, start, end, searchTree, vertexes); // get path from dijkstra
-  astar(start, end, vertex,graph);
+  // astar(start, end, vertex,graph);
 
+
+  
+  
   start_time = clock();
   bdijkstra(graph, start, binarySearchTree);
   length = (clock() - start_time) / (double) CLOCKS_PER_SEC;
@@ -298,7 +301,6 @@ list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash>
   length = (clock() - start_time) / (double) CLOCKS_PER_SEC;
   cout << "The Fibonnaci Heap Dijkstra's Running Time : " << length << endl;
 
-
   list<int> path;
   list<pointData> path1;
 
@@ -308,7 +310,7 @@ list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash>
   }
   else {
     int stepping = end;
-    cout << searchTree[end].first << endl;
+    
     while (stepping != start) {
       path.push_front(stepping);
 
@@ -326,6 +328,7 @@ list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash>
       }
     }
   }
+  // cout << path1.size() << endl;
   return path1;
 }
 
@@ -337,22 +340,16 @@ int main() {
     readFile(noise);
     generateNoise(vertex, noise, graph);
     findEdge(graph, vertex);
-   
-    string line = waitRequest();
-    pointData start, end;
-    processRequest(line, start, end);
-    int startnode = closest_point(vertex, start);
-    int endnode = closest_point(vertex, end);
-    // cout << startnode << " " << endnode << endl;
-    // cout << start.x << " " << start.y << " " << end.x << " "<<end.y <<endl;
-    list<pointData> path = getPath(vertex, graph, startnode, endnode); 
-    // cout << path.size() << endl;
-    communicate(path);
-    // waitRequest();
-    // for (i : path) {
-    //   cout << i << endl;
-    // }
-    // cout << "done" << endl;
+    while (true) {
+      string line = waitRequest();
+      pointData start, end;
+      processRequest(line, start, end);
+      int startnode = closest_point(vertex, start);
+      int endnode = closest_point(vertex, end);
+      list<pointData> path = getPath(vertex, graph, startnode, endnode); 
+      communicate(path);
+    }
+    
 
     
     return 0;

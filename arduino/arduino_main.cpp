@@ -36,7 +36,7 @@ uint16_t buf_len = 0; // buffer length
 char* buffer = (char *) malloc(buf_size); // allocate memory
 // uint16_t noise[1600];
 // uint16_t noise[2304];
-uint8_t height[2304] = {0};
+uint8_t height[2304];
 uint16_t pathx[500];
 uint16_t pathy[500];
 uint16_t pathsize = 0;
@@ -44,7 +44,6 @@ int playerX = 120;
 int playerY = 120;
 int oldX = playerX;
 int oldY = playerY;
-unsigned long bookmark = 0;
 bool solve = false;
 
 uint8_t map_number = 1;
@@ -84,15 +83,15 @@ void setup() {
   drawButtons();
 }
 
-// bool timeout(unsigned long start, unsigned long duration) {
-// /* this function checks or arduino timeout */
+bool timeout(unsigned long start, unsigned long duration) {
+/* this function checks or arduino timeout */
 
-//   unsigned long currenttime = millis();
-//   if(currenttime > start + duration) {
-//     return true;
-//   }
-//   else {return false;}
-// }
+  unsigned long currenttime = millis();
+  if(currenttime > start + duration) {
+    return true;
+  }
+  else {return false;}
+}
 
 void drawButtons() {
   // draw top right box for rating selector
@@ -295,6 +294,10 @@ void drawPath() {
                 uint16_t x1 = pathx[i+1]-((map_number-1)%5)*240;
                 uint16_t y1 = pathy[i+1]-(convert_y_mapnumber(map_number)*240);
                 tft.drawLine(x,y,x1,y1,ILI9341_BLACK);
+                tft.drawLine(x,y+1,x1,y1+1,ILI9341_BLACK);
+                tft.drawLine(x,y-1,x1-1,y1,ILI9341_BLACK);
+                tft.drawLine(x+1,y,x1+1,y1,ILI9341_BLACK);
+                tft.drawLine(x-1,y,x1-1,y1,ILI9341_BLACK);
             }
         }
     }
@@ -372,8 +375,8 @@ void movePlayer() {
 
 bool checkEnd(uint16_t x, uint16_t y) {
 
-  if (abs(playerX-x) < 2) {
-    if (abs(playerY-y) < 2) {
+  if (abs(playerX-x) < 5) {
+    if (abs(playerY-y) < 5) {
       return true;
     }
   }
@@ -382,7 +385,7 @@ bool checkEnd(uint16_t x, uint16_t y) {
 
 void displayEnd() {
   tft.fillScreen(ILI9341_WHITE);
-  tft.setCursor(0, 120);
+  tft.setCursor(10, 100);
   tft.setTextSize(2);
   tft.println("You found the treasure!");
   tft.println();
@@ -399,6 +402,8 @@ void displayEnd() {
   }
   generateMap();
   drawButtons();
+  movePlayer();
+  solve = false;
 }
 
 void player() {
@@ -475,11 +480,13 @@ void player() {
     if (solve) {
       drawPath();
     }
-    if (check_touch() == 1) {
+
+    int touch = check_touch();
+    if (touch == 1) {
       end(x, y, map);
       delay(100);
     }
-    else if (check_touch() == 2) {
+    else if (touch == 2) {
       // send location
       sendRequest(x,y, map);
       read();
@@ -497,15 +504,16 @@ void processBuffer(const char* buffer,bool &xy, int &counter) {
       pathsize += (buffer[i] - '0') * factor;
       factor *= 10;
     }
-     
+    
     if (pathsize == 0 || pathsize > 500) {  // check length of waypoints
       pathsize = 0;
       return;
     }
     Serial.println("A");  // if passed check above, send acknowledgement
+    // Serial.println(pathsize); 
   }
 
-  else {  // if W is read, compute waypoint coords
+  else if ((int) buffer[0] >= 48 && (int) buffer[0] <=57 ){  // if W is read, compute waypoint coords
 
     if (xy) {
       pathx[counter] = atoi(buffer);
@@ -519,6 +527,8 @@ void processBuffer(const char* buffer,bool &xy, int &counter) {
 
     Serial.flush();
     Serial.println("A");  // send achknowledgement to server
+
+    // Serial.println(buffer);
     // Serial.print("A ");
     // Serial.println(buffer);
   }
@@ -531,16 +541,16 @@ if timesout, otherwise false. This code is based of simple_client.cpp */
   // Serial.println("ddsfo");
   char in_char;
 
-  // unsigned long starttime = millis();             // start timer
-  // unsigned long duration = 10000;                 // initially set to 10s
+  unsigned long starttime = millis();             // start timer
+  unsigned long duration = 10000;                 // initially set to 10s
   int counter = 0;
   bool xy = true; // x is true
-
+  Serial.flush();
   do {  // read in character
     // bool timed = timeout(starttime, duration);
     // Serial.print("wait");
     if (Serial.available()) { // if timeout
-      // starttime = millis();
+      starttime = millis();
       // duration = 1000;                  // reset start time and change waiting time to 1s
       // read the incoming byte:
       in_char = Serial.read();  // read character
@@ -572,26 +582,9 @@ if timesout, otherwise false. This code is based of simple_client.cpp */
     // else if (timed) {return 1;}          // timeout issue
 
   } while (in_char != 'E'); // read until exit given or error
+  Serial.flush();
   return 0;                     // successfully read
 }
-
-// bool recieveNoise() {
-//     // Serial.flush();
-//     // char in = 'Z';
-//     Serial.println("S");
-//     // do {
-//     //   Serial.println("S");
-//     //   if (Serial.available()) {
-//     //     in = Serial.read();
-//     //   }
-//     // } while (in != 'A');
-//     // Serial.println("S");
-//     Serial.flush();
-    
-    
-//     read();
-//     return true;
-// }
 
 int main() {
   setup();
