@@ -24,10 +24,8 @@ typedef pair<long long, int> PLI;
 
 void fibdijkstra(const WDigraph& graph, int startVertex, unordered_map<int, PLI>& tree, list<int> &vertex);
 
-void bdijkstra(const WDigraph& graph, int startVertex, 
-  unordered_map<int, PLI>& tree);
+void bdijkstra(const WDigraph& graph, int startVertex, unordered_map<int, PLI>& tree);
 
-void dijkstra(const WDigraph& graph, int startVertex, 
-  unordered_map<int, PLI>& tree);
+void dijkstra(const WDigraph& graph, int startVertex, unordered_map<int, PLI>& tree);
 
 #endif

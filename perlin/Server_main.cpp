@@ -286,7 +286,7 @@ list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash>
 
   // dijkstra(graph, start, searchTree);
   // fibDijkstra(graph, start, end, searchTree, vertexes); // get path from dijkstra
-  astar(start, end, vertex,graph);
+  // astar(start, end, vertex,graph);
 
   start_time = clock();
   bdijkstra(graph, start, binarySearchTree);
