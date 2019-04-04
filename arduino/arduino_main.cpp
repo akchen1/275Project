@@ -302,12 +302,21 @@ void drawPath() {
 
 void end(uint16_t &x, uint16_t &y, uint8_t &map) {
   randomSeed(analogRead(4));
+<<<<<<< HEAD
   x = random(0,240);
   y = random(0,240);
   map = random(1, 26);
   // x = 120;
   // y = 120;
   // map = 7;
+=======
+  // x = random(0,240);
+  // y = random(0,240);
+  // map = random(1, 26);
+  x = 200;
+  y = 200;
+  map = 1;
+>>>>>>> branchingtime
 
   // x = floor(constrain(x / 5, 0, 47));
   // y = floor(constrain(y / 5, 0, 47));

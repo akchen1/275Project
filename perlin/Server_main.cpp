@@ -189,6 +189,7 @@ void processRequest(string line, pointData &start, pointData &end) {
   line = line.substr(loc+1);  //  set line to next coordnate
   loc = line.find(" "); // find space
   end.y = stoi(line.substr(0, loc));  // read until space and store as lon
+
 };
 
 string waitRequest() {
@@ -286,7 +287,8 @@ list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash>
     vertexes.push_front(i.second.first);
   }
   
-  dijkstra(graph, start, searchTree);
+  //bdijkstra(graph, start, searchTree);
+  bdijkstra(graph, start, searchTree);
   // fibDijkstra(graph, start, end, searchTree, vertexes); // get path from dijkstra
 
   list<int> path;
@@ -298,7 +300,7 @@ list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash>
   }
   else {
     int stepping = end;
-    cout << searchTree[end].first << endl;
+    cout << "took time to find path " << searchTree[end].first << endl;
     while (stepping != start) {
       path.push_front(stepping);
 
@@ -327,6 +329,11 @@ int main() {
     readFile(noise);
     generateNoise(vertex, noise);
     findEdge(graph, vertex);
+    for (auto i : vertex) {
+      cout << "x " << i.first.x << " " << "y " << i.first.y << endl;
+      cout << "node number " << i.second.first << " cost " << i.second.second << endl;
+      cout << endl;
+    }
     string line = waitRequest();
     pointData start, end;
     processRequest(line, start, end);
