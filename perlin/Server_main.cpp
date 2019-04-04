@@ -1,4 +1,3 @@
-#include "perlin.h"
 #include <vector>
 #include <iostream>
 #include <iomanip>
@@ -38,65 +37,69 @@ struct pointHash {
   }
 };
 
-void createImage(const vector<double> coords) {
-  ofstream mapdata;
+void readFile(vector<double>& noise) {
+  ifstream mapdata;
   mapdata.open("mapdata.txt");
-  mapdata.precision(5);
-  mapdata.setf(ios::fixed, ios::floatfield);
-  for (auto i : coords) {
-    // cout << i.first << endl;
-    mapdata << i << endl;
+  string line;
+  while (getline(mapdata, line)) {
+    // cout << line << endl;
+
+    noise.push_back(stod(line));
   }
   mapdata.close();
 }
 
-void generateNoise(unordered_map<pointData, pair<int, int>, pointHash> &vertex, const vector<int> perm, vector<double>& coords) {
+void generateNoise(unordered_map<pointData, pair<int, int>, pointHash> &vertex, const vector<double> noise) {
+  pointData node;
   int W_offset = 0;
   int H_offset = 0;
-  pointData node;
+  int x = 0;
+  int y = 0;
   int key = 0;
-  for (int grid = 1; grid <= 25; grid ++) {
-    for (int i = 0 + W_offset; i < MAP_WIDTH/5 + W_offset; i+=5) {  // x
-      for (int j = 0 + H_offset; j < MAP_HEIGHT/5 + H_offset; j+=5) { // y
-        double x = (double) i/ ((double) MAP_WIDTH);
-        double y = (double) j/ ((double) MAP_HEIGHT);
-
-        double n = noise( 20*x,  20*y, 0.8, perm);
-
-        // double n = 20 * noise(x, y, 0.8, perm);
-        // n = n - floor(n);
-        n = abs(n);
-        if (n < 0.1) {  //ground
-          node.x = i;
-          node.y = j;
-          vertex.insert({node, make_pair(key, 1)});
-          key++;
-        }
-        else if (n < 0.2) { //green
-          node.x = i;
-          node.y = j;
-          vertex.insert({node, make_pair(key, 2)});
-          key++;
-        }
-        else if (n < 0.3) { //ater
-          node.x = i;
-          node.y = j;
-          vertex.insert({node, make_pair(key, 3)});
-          key++;
-        }
-
-        
-        coords.push_back(n);
-        // cout << n << " ";
-        // cout << n/1000 << endl;
+  int counter = 0;
+  int mapnum = 1;
+  for (auto i : noise) {
+    if (i < 0.1) {  //ground
+      node.x = x;
+      node.y = y;
+      vertex.insert({node, make_pair(key, 1)});
+      key++;
+    }
+    else if (i < 0.2) { //green
+      node.x = x;
+      node.y = y;
+      vertex.insert({node, make_pair(key, 2)});
+      key++;
+    }
+    else if (i < 0.3) { //ater
+      node.x = x;
+      node.y = y;
+      vertex.insert({node, make_pair(key, 3)});
+      key++;
+    }
+    // cout << x << " " << y << endl;
+    x+=5;
+    if ((x+W_offset)%240 == 0) {
+      y += 5;
+      x = W_offset;
+      counter++;
+    }
+    if (counter == 48) {
+      counter = 0;
+      y = H_offset;
+      W_offset += 240;
+      x = W_offset;
+      
+      
+      if (mapnum%5==0) {
+        W_offset = 0;
+        x = 0;
+        H_offset += 240;
+        y = H_offset;
       }
+      mapnum++;
     }
-    H_offset += MAP_WIDTH/5;
-    if (grid%5==0) {
-      W_offset += MAP_HEIGHT/5;
-      H_offset = 0;
-    }
-    
+
   }
 }
 
@@ -295,6 +298,7 @@ list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash>
   }
   else {
     int stepping = end;
+    cout << searchTree[end].first << endl;
     while (stepping != start) {
       path.push_front(stepping);
 
@@ -317,13 +321,11 @@ list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash>
 
 
 int main() {
-    vector<double> coords;
+    vector<double> noise;
     unordered_map<pointData, pair<int,int>, pointHash> vertex;
     WDigraph graph;
-    vector<int> perm;   // mermutation vector
-    fill(perm);
-    generateNoise(vertex, perm, coords);
-    createImage(coords);
+    readFile(noise);
+    generateNoise(vertex, noise);
     findEdge(graph, vertex);
     string line = waitRequest();
     pointData start, end;

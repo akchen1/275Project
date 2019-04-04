@@ -175,11 +175,11 @@ template <typename T, typename K>
 void FibonnaciHeap<T, K>::popMin() {
       fibnode<T,K> * node = min;
 
-  for (int i = 0; i< trees; i++) {
-    cout << " -> " << node->key;
-    node = node->next;
-  }
-  cout << endl;
+  // for (int i = 0; i< trees; i++) {
+  //   cout << " -> " << node->key;
+  //   node = node->next;
+  // }
+  // cout << endl;
 
   if (min->child != NULL) {
     node = min->child;
