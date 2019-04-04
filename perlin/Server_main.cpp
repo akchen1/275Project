@@ -12,7 +12,11 @@
 #include <random>
 #include <cmath>
 #include <list>
+
+#include "astar.h"
+#include "server_util.h"
 #include <ctime>
+
 
 using namespace std;
 
@@ -21,22 +25,7 @@ using namespace std;
 
 SerialPort Serial("/dev/ttyACM0");
 
-struct pointData {
-  int x;
-  int y;
-  bool operator==(const pointData &other) const {
-    return ((x==other.x && y==other.y));
-  }
-};
 
-struct pointHash {
-  size_t operator()(const pointData &data) const {
-    size_t res = 17;
-    res = res*31 + hash<int>()(data.x);
-    res = res*31 + hash<int>()(data.y);
-    return res;
-  }
-};
 
 void readFile(vector<double>& noise) {
   ifstream mapdata;
@@ -50,7 +39,7 @@ void readFile(vector<double>& noise) {
   mapdata.close();
 }
 
-void generateNoise(unordered_map<pointData, pair<int, int>, pointHash> &vertex, const vector<double> noise) {
+void generateNoise(unordered_map<pointData, pair<int, int>, pointHash> &vertex, const vector<double> noise,WDigraph &graph) {
   pointData node;
   int W_offset = 0;
   int H_offset = 0;
@@ -63,18 +52,21 @@ void generateNoise(unordered_map<pointData, pair<int, int>, pointHash> &vertex, 
     if (i < 0.1) {  //ground
       node.x = x;
       node.y = y;
+      graph.addVertex(key);
       vertex.insert({node, make_pair(key, 1)});
       key++;
     }
     else if (i < 0.2) { //green
       node.x = x;
       node.y = y;
+      graph.addVertex(key);
       vertex.insert({node, make_pair(key, 2)});
       key++;
     }
-    else if (i < 0.3) { //ater
+    else if (i < 0.3) { //water
       node.x = x;
       node.y = y;
+      graph.addVertex(key);
       vertex.insert({node, make_pair(key, 3)});
       key++;
     }
@@ -109,7 +101,7 @@ bool wait_confirmation(float waittime) {
 
   string line;
   line = Serial.readline(waittime); // read from serial monitor with timeout
-  cout << "got " << line;
+  // cout << "got " << line;
   if (line == "" || line.substr(0,1) != "A") {  // if timeout or incorrect response set false
     return false;
   }
@@ -291,6 +283,11 @@ list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash>
     vertexes.push_front(i.second.first);
   }
   
+
+  // dijkstra(graph, start, searchTree);
+  // fibDijkstra(graph, start, end, searchTree, vertexes); // get path from dijkstra
+  astar(start, end, vertex,graph);
+
   start_time = clock();
   bdijkstra(graph, start, binarySearchTree);
   length = (clock() - start_time) / (double) CLOCKS_PER_SEC;
@@ -300,6 +297,7 @@ list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash>
   fibdijkstra(graph, start, searchTree, vertexes); // get path from dijkstra
   length = (clock() - start_time) / (double) CLOCKS_PER_SEC;
   cout << "The Fibonnaci Heap Dijkstra's Running Time : " << length << endl;
+
 
   list<int> path;
   list<pointData> path1;
@@ -337,8 +335,9 @@ int main() {
     unordered_map<pointData, pair<int,int>, pointHash> vertex;
     WDigraph graph;
     readFile(noise);
-    generateNoise(vertex, noise);
+    generateNoise(vertex, noise, graph);
     findEdge(graph, vertex);
+   
     string line = waitRequest();
     pointData start, end;
     processRequest(line, start, end);
