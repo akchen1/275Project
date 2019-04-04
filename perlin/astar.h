@@ -42,9 +42,7 @@ void fibstar(int start, int end, const unordered_map<pointData, pair<int,int>, p
   long long duration = 0;
   FibonnaciHeap<PII, long long> fires;
   long long x1, y1;
-  float distance;
-
-  long long disheuristic;
+  long long disheuristic = 0;
   // unordered_map<int, fibnode<int, long long> *> vertexMap;
 
   // initialize vector containing all fibnodes

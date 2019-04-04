@@ -272,7 +272,7 @@ list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash>
   const pointData startCoords, const pointData endCoords) {
   unordered_map<int, PLI> searchTree;
   unordered_map<int, PLI> binarySearchTree;
-
+  unordered_map<int, PLI> astarSearchTree; 
 
   clock_t start_time;
   double length;
@@ -286,27 +286,23 @@ list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash>
     vertexes.push_front(i.second.first);
   }
   
-
   // dijkstra(graph, start, searchTree);
   // fibDijkstra(graph, start, end, searchTree, vertexes); // get path from dijkstra
   // astar(start, end, vertex,graph);
 
-
-  // start_time = clock();
-  // bdijkstra(graph, start, binarySearchTree);
-  // length = (clock() - start_time) / (double) CLOCKS_PER_SEC;
-  // cout << "The Binary Heap Dijkstra's Running Time : " << length << endl;
-
-
-  
+  start_time = clock();
+  bdijkstra(graph, start, binarySearchTree);
+  length = (clock() - start_time) / (double) CLOCKS_PER_SEC;
+  cout << "The Binary Heap Dijkstra's Running Time : " << length << endl;
+ 
   
   start_time = clock();
-  fibdijkstra(graph, start, binarySearchTree, vertexes); // get path from dijkstra
+  fibdijkstra(graph, start, searchTree, vertexes); // get path from dijkstra
   length = (clock() - start_time) / (double) CLOCKS_PER_SEC;
   cout << "The Fibonnaci Heap Dijkstra's Running Time : " << length << endl;
 
   start_time = clock();
-  fibstar(start, end, vertex, graph, searchTree, startCoords, endCoords); // get path from dijkstra
+  fibstar(start, end, vertex, graph, astarSearchTree, startCoords, endCoords); // get path from dijkstra
   length = (clock() - start_time) / (double) CLOCKS_PER_SEC;
   cout << "The FibStar Running Time : " << length << endl;
 
@@ -354,7 +350,7 @@ int main() {
       processRequest(line, start, end);
       int startnode = closest_point(vertex, start);
       int endnode = closest_point(vertex, end);
-      list<pointData> path = getPath(vertex, graph, startnode, endnode); 
+      list<pointData> path = getPath(vertex, graph, startnode, endnode, start, end); 
       communicate(path);
     }
     
