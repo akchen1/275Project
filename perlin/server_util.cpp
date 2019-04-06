@@ -1,30 +1,25 @@
-#ifndef _SERVER_UTIL_H_
-#define _SERVER_UTIL_H_
 
-#include <vector>
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include "serialport.h"
-#include "digraph.h"
-#include "wdigraph.h"
-#include "dijkstra.h"
-#include <unordered_map>
-#include <fstream>
-#include <utility>
-#include <random>
-#include <cmath>
-#include <list>
-#include "astar.h"
-#include <ctime>
-#include "pointData.h"
+
+#include "server_util.h"
 
 using namespace std;
 
-#define MAP_WIDTH 1200
-#define MAP_HEIGHT 1200
+// struct pointData {
+//   int x;
+//   int y;
+//   bool operator==(const pointData &other) const {
+//     return ((x==other.x && y==other.y));
+//   }
+// };
 
-SerialPort Serial("/dev/ttyACM0");
+// struct pointHash {
+//   size_t operator()(const pointData &data) const {
+//     size_t res = 17;
+//     res = res*31 + hash<int>()(data.x);
+//     res = res*31 + hash<int>()(data.y);
+//     return res;
+//   }
+// };
 
 int manhattan(const pointData& pt1, const pointData& pt2) {
 /* Returns the manhattan distances */
@@ -361,5 +356,3 @@ path is measured. */
   }
   return path1;
 }
-
-#endif

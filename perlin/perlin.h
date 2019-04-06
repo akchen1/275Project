@@ -4,7 +4,6 @@
 #include <random>
 #include <vector>
 #include <utility>
-#include <iostream>
 #include <cmath>
 #include <time.h>
 #include <fstream>
@@ -20,6 +19,11 @@ void fill(vector<int> &v) {
   v.insert(v.end(), v.begin(), v.end());
 }
 
+/* IMPORTANT!
+    These functions below are based and taken from Ken Perlin who
+    invented Perlin noise
+    https://mrl.nyu.edu/~perlin/noise/
+*/
 double interpolate(double x, double a, double b) {
   return a + x *(b-a);
 }
