@@ -36,7 +36,7 @@ uint16_t buf_len = 0; // buffer length
 char* buffer = (char *) malloc(buf_size); // allocate memory
 // uint16_t noise[1600];
 // uint16_t noise[2304];
-uint8_t height[2304] = {0};
+uint8_t height[2304];
 uint16_t pathx[500];
 uint16_t pathy[500];
 uint16_t pathsize = 0;
@@ -44,7 +44,6 @@ int playerX = 120;
 int playerY = 120;
 int oldX = playerX;
 int oldY = playerY;
-unsigned long bookmark = 0;
 bool solve = false;
 
 uint8_t map_number = 1;
@@ -84,30 +83,44 @@ void setup() {
   drawButtons();
 }
 
-// bool timeout(unsigned long start, unsigned long duration) {
-// /* this function checks or arduino timeout */
+bool timeout(unsigned long start, unsigned long duration) {
+/* this function checks or arduino timeout */
 
-//   unsigned long currenttime = millis();
-//   if(currenttime > start + duration) {
-//     return true;
-//   }
-//   else {return false;}
-// }
+  unsigned long currenttime = millis();
+  if(currenttime > start + duration) {
+    return true;
+  }
+  else {return false;}
+}
 
 void drawButtons() {
   // draw top right box for rating selector
-  tft.fillRect(MAP_WIDTH + 1, 0, DISPLAY_WIDTH - MAP_WIDTH, DISPLAY_HEIGHT-1, ILI9341_BLUE);
-  tft.drawRect(MAP_WIDTH + 1, 0, DISPLAY_WIDTH - MAP_WIDTH-1, DISPLAY_HEIGHT, ILI9341_RED);
-  // tft.drawRect(DISPLAY_WIDTH - 47, 2, 46, (DISPLAY_HEIGHT-1)/2-2, ILI9341_RED);
+  tft.fillRect(MAP_WIDTH, 1, DISPLAY_WIDTH - MAP_WIDTH, (DISPLAY_HEIGHT-1)/2, ILI9341_WHITE);
+  tft.drawRect(MAP_WIDTH, 1, DISPLAY_WIDTH - MAP_WIDTH, (DISPLAY_HEIGHT-1)/2, ILI9341_RED);
   
-  tft.setCursor(290, 160);
+  tft.setTextSize(3);
+  tft.setTextColor(0x0000, 0xFFFF);
+  tft.setCursor(290, 45);
+
+  // draw sorting cycle option (lower right)
+  tft.fillRect(MAP_WIDTH, (DISPLAY_HEIGHT-1)/2 + 4, DISPLAY_WIDTH - MAP_WIDTH, (DISPLAY_HEIGHT-1)/2 - 4, ILI9341_WHITE);
+  tft.drawRect(MAP_WIDTH, (DISPLAY_HEIGHT-1)/2 + 2, DISPLAY_WIDTH - MAP_WIDTH, (DISPLAY_HEIGHT-1)/2, ILI9341_GREEN);
+  
+
+  // tft.setCursor(290, 160);
   tft.setTextSize(2);
-  tft.drawChar(MAP_WIDTH + (DISPLAY_WIDTH - MAP_WIDTH)/2, 132, 'S', ILI9341_BLACK, ILI9341_BLUE, 2);
-  tft.drawChar(MAP_WIDTH + (DISPLAY_WIDTH - MAP_WIDTH)/2, 152, 'O', ILI9341_BLACK, ILI9341_BLUE, 2);
-  tft.drawChar(MAP_WIDTH + (DISPLAY_WIDTH - MAP_WIDTH)/2, 172, 'L', ILI9341_BLACK, ILI9341_BLUE, 2);
-  tft.drawChar(MAP_WIDTH + (DISPLAY_WIDTH - MAP_WIDTH)/2, 192, 'V', ILI9341_BLACK, ILI9341_BLUE, 2);
-  tft.drawChar(MAP_WIDTH + (DISPLAY_WIDTH - MAP_WIDTH)/2, 212, 'E', ILI9341_BLACK, ILI9341_BLUE, 2);
-}  
+
+
+  tft.drawChar(MAP_WIDTH+35, 40, 'N', ILI9341_BLACK, ILI9341_WHITE, 2);
+  tft.drawChar(MAP_WIDTH+35, 60, 'E', ILI9341_BLACK, ILI9341_WHITE, 2);
+  tft.drawChar(MAP_WIDTH+35, 80, 'W', ILI9341_BLACK, ILI9341_WHITE, 2);
+
+  tft.drawChar(MAP_WIDTH+35, 132, 'S', ILI9341_BLACK, ILI9341_WHITE, 2);
+  tft.drawChar(MAP_WIDTH+35, 152, 'O', ILI9341_BLACK, ILI9341_WHITE, 2);
+  tft.drawChar(MAP_WIDTH+35, 172, 'L', ILI9341_BLACK, ILI9341_WHITE, 2);
+  tft.drawChar(MAP_WIDTH+35, 192, 'V', ILI9341_BLACK, ILI9341_WHITE, 2);
+  tft.drawChar(MAP_WIDTH+35, 212, 'E', ILI9341_BLACK, ILI9341_WHITE, 2);
+}
 
 uint8_t convert_y_mapnumber(uint8_t number) {
   uint8_t newlevel = 4;
@@ -136,16 +149,22 @@ void sendRequest(uint16_t x, uint16_t y, uint8_t map) {
   solve = true;
 }
 
-bool check_touch() {
+int check_touch() {
 /* check where the map is touched*/
 
     TSPoint p = ts.getPoint();
     if (p.z < MINPRESSURE || p.z > MAXPRESSURE) {
-        return false;
+        return 0;
     }
     int screen_x = map(p.y, TS_MINY, TS_MAXY, DISPLAY_WIDTH, 0);
+    int screen_y = map(p.x, TS_MINY, TS_MAXY, DISPLAY_HEIGHT, 0);
     if (screen_x >= MAP_WIDTH) {   // if touch in map
-        return true;                       // condition for map touch
+      if (screen_y >= (DISPLAY_HEIGHT-1)/2) {
+        return 1;
+      }
+      else {
+        return 2;                       // condition for map touch
+      }
     }
 }
 
@@ -275,15 +294,24 @@ void drawPath() {
                 uint16_t x1 = pathx[i+1]-((map_number-1)%5)*240;
                 uint16_t y1 = pathy[i+1]-(convert_y_mapnumber(map_number)*240);
                 tft.drawLine(x,y,x1,y1,ILI9341_BLACK);
+                tft.drawLine(x,y+1,x1,y1+1,ILI9341_BLACK);
+                tft.drawLine(x,y-1,x1-1,y1,ILI9341_BLACK);
+                tft.drawLine(x+1,y,x1+1,y1,ILI9341_BLACK);
+                tft.drawLine(x-1,y,x1-1,y1,ILI9341_BLACK);
             }
         }
     }
 }
 
 void end(uint16_t &x, uint16_t &y, uint8_t &map) {
+  randomSeed(analogRead(4));
   x = random(0,240);
   y = random(0,240);
   map = random(1, 26);
+  // x = 120;
+  // y = 120;
+  // map = 7;
+
   // x = floor(constrain(x / 5, 0, 47));
   // y = floor(constrain(y / 5, 0, 47));
 }
@@ -343,7 +371,39 @@ void movePlayer() {
     colorMap(val, 5*x_center,5*y_center, 5 );
   }
   tft.fillCircle(playerX, playerY, 2, ILI9341_RED);
+}
 
+bool checkEnd(uint16_t x, uint16_t y) {
+
+  if (abs(playerX-x) < 5) {
+    if (abs(playerY-y) < 5) {
+      return true;
+    }
+  }
+  return false;
+}
+
+void displayEnd() {
+  tft.fillScreen(ILI9341_WHITE);
+  tft.setCursor(10, 100);
+  tft.setTextSize(2);
+  tft.println("You found the treasure!");
+  tft.println();
+  tft.println("Tap the screen to play again");
+  bool touch = false;
+  while (!touch) {
+    TSPoint p = ts.getPoint();
+    if (p.z < MINPRESSURE || p.z > MAXPRESSURE) {
+      touch = false;
+    }
+    else {
+      touch = true;
+    }
+  }
+  generateMap();
+  drawButtons();
+  movePlayer();
+  solve = false;
 }
 
 void player() {
@@ -393,10 +453,6 @@ void player() {
       playerY = MAP_HEIGHT - 5;
     }
 
-    if (map_number == map) {
-      tft.fillRect(x, y, 4, 4, ILI9341_RED);
-    }
-
     if (playerMove) {
       // Serial.println("checking height");
       if (!checkHeight()) {
@@ -412,15 +468,31 @@ void player() {
         oldY = playerY;
       }
     }
+
+    if (map_number == map) {
+      tft.fillRect(x, y, 4, 4, ILI9341_RED);
+      if(checkEnd(x,y)) {
+        displayEnd();
+        end(x,y,map);
+      }
+    }
+
     if (solve) {
       drawPath();
     }
-    if (check_touch()) {
+
+    int touch = check_touch();
+    if (touch == 1) {
+      end(x, y, map);
+      delay(100);
+    }
+    else if (touch == 2) {
       // send location
       sendRequest(x,y, map);
       read();
       drawPath();
     }
+
   }
 }
 
@@ -432,15 +504,16 @@ void processBuffer(const char* buffer,bool &xy, int &counter) {
       pathsize += (buffer[i] - '0') * factor;
       factor *= 10;
     }
-     
+    
     if (pathsize == 0 || pathsize > 500) {  // check length of waypoints
       pathsize = 0;
       return;
     }
     Serial.println("A");  // if passed check above, send acknowledgement
+    // Serial.println(pathsize); 
   }
 
-  else {  // if W is read, compute waypoint coords
+  else if ((int) buffer[0] >= 48 && (int) buffer[0] <=57 ){  // if W is read, compute waypoint coords
 
     if (xy) {
       pathx[counter] = atoi(buffer);
@@ -454,6 +527,8 @@ void processBuffer(const char* buffer,bool &xy, int &counter) {
 
     Serial.flush();
     Serial.println("A");  // send achknowledgement to server
+
+    // Serial.println(buffer);
     // Serial.print("A ");
     // Serial.println(buffer);
   }
@@ -466,16 +541,16 @@ if timesout, otherwise false. This code is based of simple_client.cpp */
   // Serial.println("ddsfo");
   char in_char;
 
-  // unsigned long starttime = millis();             // start timer
-  // unsigned long duration = 10000;                 // initially set to 10s
+  unsigned long starttime = millis();             // start timer
+  unsigned long duration = 10000;                 // initially set to 10s
   int counter = 0;
   bool xy = true; // x is true
-
+  Serial.flush();
   do {  // read in character
     // bool timed = timeout(starttime, duration);
     // Serial.print("wait");
     if (Serial.available()) { // if timeout
-      // starttime = millis();
+      starttime = millis();
       // duration = 1000;                  // reset start time and change waiting time to 1s
       // read the incoming byte:
       in_char = Serial.read();  // read character
@@ -507,26 +582,9 @@ if timesout, otherwise false. This code is based of simple_client.cpp */
     // else if (timed) {return 1;}          // timeout issue
 
   } while (in_char != 'E'); // read until exit given or error
+  Serial.flush();
   return 0;                     // successfully read
 }
-
-// bool recieveNoise() {
-//     // Serial.flush();
-//     // char in = 'Z';
-//     Serial.println("S");
-//     // do {
-//     //   Serial.println("S");
-//     //   if (Serial.available()) {
-//     //     in = Serial.read();
-//     //   }
-//     // } while (in != 'A');
-//     // Serial.println("S");
-//     Serial.flush();
-    
-    
-//     read();
-//     return true;
-// }
 
 int main() {
   setup();

@@ -1,0 +1,184 @@
+popping 2 at location 0xbf8dd3f0
+in quickMeld
+bha
+5 at location 0xbf8dd2e4
+my parent is 0x9d7ce18 5
+my child is 0x9d7ce1c 5
+the next is 0x9d7ce20 5
+the prev is 0x9d7ce24 5
+kid
+6 at location 0xbf8dd2e4
+my parent is 0x9d7ce48 6
+my child is 0x9d7ce4c 6
+the next is 0x9d7ce50 6
+the prev is 0x9d7ce54 6
+root
+5 at location 0xbf8dd2e4
+my parent is 0x9d7ce18 5
+my child is 0x9d7ce1c 5
+the next is 0x9d7ce20 5
+the prev is 0x9d7ce24 5
+in quickMeld
+bha
+3 at location 0xbf8dd2e4
+my parent is 0x9d7ced8 3
+my child is 0x9d7cedc 3
+the next is 0x9d7cee0 3
+the prev is 0x9d7cee4 3
+kid
+10 at location 0xbf8dd2e4
+my parent is 0x9d7cea8 10
+my child is 0x9d7ceac 10
+the next is 0x9d7ceb0 10
+the prev is 0x9d7ceb4 10
+root
+3 at location 0xbf8dd2e4
+my parent is 0x9d7ced8 3
+my child is 0x9d7cedc 3
+the next is 0x9d7cee0 3
+the prev is 0x9d7cee4 3
+in quickMeld
+bha
+5 at location 0xbf8dd2e4
+my parent is 0x9d7cf38 5
+my child is 0x9d7cf3c 5
+the next is 0x9d7cf40 5
+the prev is 0x9d7cf44 5
+kid
+8 at location 0xbf8dd2e4
+my parent is 0x9d7cf08 8
+my child is 0x9d7cf0c 8
+the next is 0x9d7cf10 8
+the prev is 0x9d7cf14 8
+root
+5 at location 0xbf8dd2e4
+my parent is 0x9d7cf38 5
+my child is 0x9d7cf3c 5
+the next is 0x9d7cf40 5
+the prev is 0x9d7cf44 5
+in quickMeld
+bha
+5 at location 0xbf8dd2e4
+my parent is 0x9d7cf68 5
+my child is 0x9d7cf6c 5
+the next is 0x9d7cf70 5
+the prev is 0x9d7cf74 5
+kid
+6 at location 0xbf8dd2e4
+my parent is 0x9d7cf98 6
+my child is 0x9d7cf9c 6
+the next is 0x9d7cfa0 6
+the prev is 0x9d7cfa4 6
+root
+5 at location 0xbf8dd2e4
+my parent is 0x9d7cf68 5
+my child is 0x9d7cf6c 5
+the next is 0x9d7cf70 5
+the prev is 0x9d7cf74 5
+in quickMeld
+bha
+2 at location 0xbf8dd2e4
+my parent is 0x9d7cfc8 2
+my child is 0x9d7cfcc 2
+the next is 0x9d7cfd0 2
+the prev is 0x9d7cfd4 2
+kid
+10 at location 0xbf8dd2e4
+my parent is 0x9d7cff8 10
+my child is 0x9d7cffc 10
+the next is 0x9d7d000 10
+the prev is 0x9d7d004 10
+root
+2 at location 0xbf8dd2e4
+my parent is 0x9d7cfc8 2
+my child is 0x9d7cfcc 2
+the next is 0x9d7cfd0 2
+the prev is 0x9d7cfd4 2
+in quickMeld
+bha
+3 at location 0xbf8dd2e4
+my parent is 0x9d7d028 3
+my child is 0x9d7d02c 3
+the next is 0x9d7d030 3
+the prev is 0x9d7d034 3
+kid
+8 at location 0xbf8dd2e4
+my parent is 0x9d7d058 8
+my child is 0x9d7d05c 8
+the next is 0x9d7d060 8
+the prev is 0x9d7d064 8
+root
+3 at location 0xbf8dd2e4
+my parent is 0x9d7d028 3
+my child is 0x9d7d02c 3
+the next is 0x9d7d030 3
+the prev is 0x9d7d034 3
+popping 2 at location 0xbf8dd3f0
+in quickMeld
+bha
+5 at location 0xbf8dd2e4
+my parent is 0x9d7d088 5
+my child is 0x9d7d08c 5
+the next is 0x9d7d090 5
+the prev is 0x9d7d094 5
+kid
+10 at location 0xbf8dd2e4
+my parent is 0x9d7cff8 10
+my child is 0x9d7cffc 10
+the next is 0x9d7d000 10
+the prev is 0x9d7d004 10
+root
+5 at location 0xbf8dd2e4
+my parent is 0x9d7d088 5
+my child is 0x9d7d08c 5
+the next is 0x9d7d090 5
+the prev is 0x9d7d094 5
+in quickMeld
+popping 3 at location 0xbf8dd3f0
+in quickMeld
+popping 3 at location 0xbf8dd3f0
+in quickMeld
+bha
+8 at location 0xbf8dd2e4
+my parent is 0x9d7d058 8
+my child is 0x9d7d05c 8
+the next is 0x9d7d060 8
+the prev is 0x9d7d064 8
+kid
+10 at location 0xbf8dd2e4
+my parent is 0x9d7cea8 10
+my child is 0x9d7ceac 10
+the next is 0x9d7ceb0 10
+the prev is 0x9d7ceb4 10
+root
+8 at location 0xbf8dd2e4
+my parent is 0x9d7d058 8
+my child is 0x9d7d05c 8
+the next is 0x9d7d060 8
+the prev is 0x9d7d064 8
+in quickMeld
+popping 5 at location 0xbf8dd3f0
+in quickMeld
+popping 5 at location 0xbf8dd3f0
+in quickMeld
+bha
+PROBLEM
+8 at location 0xbf8dd2e4
+my parent is 0x9d7cf08 8
+my child is 0x9d7cf0c 8
+the next is 0x9d7cf10 8
+the prev is 0x9d7cf14 8
+kid
+10 at location 0xbf8dd2e4
+my parent is 0x9d7cff8 10
+my child is 0x9d7cffc 10
+the next is 0x9d7d000 10
+the prev is 0x9d7d004 10
+root
+8 at location 0xbf8dd2e4
+my parent is 0x9d7cf08 8
+my child is 0x9d7cf0c 8
+the next is 0x9d7cf10 8
+the prev is 0x9d7cf14 8
+PROBLEM
+PROBLEM!

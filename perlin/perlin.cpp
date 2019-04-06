@@ -1,85 +1,55 @@
 #include "perlin.h"
+#include <iostream>
+#define MAP_WIDTH 1200
+#define MAP_HEIGHT 1200
 
-void fill(vector<int> &v) {
-/* Generate a vector of random numbers */
-  srand(time(NULL));
-  for (int i = 0; i < 256; i++) {
-      v.push_back(rand()%255);
-
-  } 
-  v.insert(v.end(), v.begin(), v.end());
+void createImage(const vector<double> coords) {
+  ofstream mapdata;
+  mapdata.open("mapdata.txt");
+  mapdata.precision(5);
+  mapdata.setf(ios::fixed, ios::floatfield);
+  for (auto i : coords) {
+    mapdata << i << endl;
+  }
+  mapdata.close();
 }
 
-double interpolate(double x, double a, double b) {
-  return a + x *(b-a);
+void generateNoise(const vector<int> perm, vector<double>& coords) {
+  int W_offset = 0;
+  int H_offset = 0;
+  for (int grid = 1; grid <= 25; grid ++) {
+    for (int i = 0 + W_offset; i < MAP_WIDTH/5 + W_offset; i+=5) {  // y
+      for (int j = 0 + H_offset; j < MAP_HEIGHT/5 + H_offset; j+=5) { // x
+        double y = (double) i/ ((double) MAP_WIDTH);
+        double x = (double) j/ ((double) MAP_HEIGHT);
+
+        double n = noise( 20*x,  20*y, 0.8, perm);
+
+        // double n = 20 * noise(x, y, 0.8, perm);
+        // n = n - floor(n);
+        n = abs(n);
+        cout << j << " " << i << endl;
+        coords.push_back(n);
+        // cout << n << " ";
+        // cout << n/1000 << endl;
+      }
+    }
+    H_offset += MAP_WIDTH/5;
+    if (grid%5==0) {
+      W_offset += MAP_HEIGHT/5;
+      H_offset = 0;
+    }
+    
+  }
 }
 
-double smooth(double x) {
-  return 6*pow(x,5) - 15*pow(x,4) + 10*pow(x,3);
+int main() {
+
+  vector<int> perm;
+  fill(perm);
+  vector<double> coords;
+  generateNoise(perm, coords);
+  createImage(coords);
+
+  return 0;
 }
-
-double Gradient(int hash, double x, double y, double z) {
-
-  int h = hash & 15;
-
-  double u = h < 8 ? x : y,
-       v = h < 4 ? y : h == 12 || h == 14 ? x : z;
-  return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v);
-
-}
-
-double noise(double x, double y, double z, const vector<int> coords) {
-
-  int x0 = (int) floor(x) & 255; // & 255 to insure we dont index out
-  int y0 = (int) floor(y) & 255;
-  int z0 = (int) floor(z) & 255;
-  
-  double sx = x - (double) floor(x);
-  double sy = y - (double) floor(y);
-  double sz = z - (double) floor(z);
-
-  double u = smooth(sx);
-  double v = smooth(sy);
-  double w = smooth(sz);
-
-  // hash coordinates
-  int A = coords[x0] +y0;
-  int AA = coords[A] + z0;
-  int AB = coords[A+1] + z0;
-  int B = coords[x0 + 1] + y0;
-  int BA = coords[B] + z0;
-  int BB = coords[B+1] + z0;
-
-
-  double GradAA = Gradient(coords[AA], sx, sy, sz);
-  double GradBA = Gradient(coords[BA], sx-1, sy, sz);
-  double GradAB = Gradient(coords[AB], sx, sy - 1, sz);
-  double GradBB = Gradient(coords[BB], sx-1, sy-1, sz);
-  // cout << GradAA << " " << GradBA << " " << GradAB << endl;
-
-  double GradAA1 = Gradient(coords[AA+1], sx, sy, sz-1);
-  double GradBA1 = Gradient(coords[BA+1], sx-1, sy, sz-1);
-  double GradAB1 = Gradient(coords[AB+1], sx, sy - 1, sz-1);
-  double GradBB1 = Gradient(coords[BB+1], sx-1, sy-1, sz-1);
-
-  double Top_x = interpolate(u, GradAA, GradBA);
-  double Top_y = interpolate(u, GradAB, GradBB);
-  double Bot_x = interpolate(u, GradAA1, GradBA1);
-  double Bot_y = interpolate(u, GradAB1, GradBB1);
-
-  double value = interpolate(w, interpolate(v,Top_x,Top_y), interpolate(v, Bot_x, Bot_y));
-  return value;
-
-}
-// int main() {
-
-//   vector<int> v;
-//   fill(v);
-//   cout << noise(1, 1, 0, v) << endl;
-//   cout << noise(2.5, 2.5, 0, v) << endl;
-//     // for (auto i = v.begin(); i != v.end(); ++i) {
-//     //     cout << *i << endl;
-//     // }
-
-//   return 0;
-// }

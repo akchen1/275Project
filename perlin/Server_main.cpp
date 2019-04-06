@@ -1,4 +1,3 @@
-#include "perlin.h"
 #include <vector>
 #include <iostream>
 #include <iomanip>
@@ -14,6 +13,11 @@
 #include <cmath>
 #include <list>
 
+#include "astar.h"
+#include "server_util.h"
+#include <ctime>
+
+
 using namespace std;
 
 #define MAP_WIDTH 1200
@@ -21,82 +25,74 @@ using namespace std;
 
 SerialPort Serial("/dev/ttyACM0");
 
-struct pointData {
-  int x;
-  int y;
-  bool operator==(const pointData &other) const {
-    return ((x==other.x && y==other.y));
-  }
-};
 
-struct pointHash {
-  size_t operator()(const pointData &data) const {
-    size_t res = 17;
-    res = res*31 + hash<int>()(data.x);
-    res = res*31 + hash<int>()(data.y);
-    return res;
-  }
-};
 
-void createImage(const vector<double> coords) {
-  ofstream mapdata;
+void readFile(vector<double>& noise) {
+  ifstream mapdata;
   mapdata.open("mapdata.txt");
-  mapdata.precision(5);
-  mapdata.setf(ios::fixed, ios::floatfield);
-  for (auto i : coords) {
-    // cout << i.first << endl;
-    mapdata << i << endl;
+  string line;
+  while (getline(mapdata, line)) {
+    // cout << line << endl;
+
+    noise.push_back(stod(line));
   }
   mapdata.close();
 }
 
-void generateNoise(unordered_map<pointData, pair<int, int>, pointHash> &vertex, const vector<int> perm, vector<double>& coords) {
+void generateNoise(unordered_map<pointData, pair<int, int>, pointHash> &vertex, const vector<double> noise,WDigraph &graph) {
+  pointData node;
   int W_offset = 0;
   int H_offset = 0;
-  pointData node;
+  int x = 0;
+  int y = 0;
   int key = 0;
-  for (int grid = 1; grid <= 25; grid ++) {
-    for (int i = 0 + W_offset; i < MAP_WIDTH/5 + W_offset; i+=5) {  // x
-      for (int j = 0 + H_offset; j < MAP_HEIGHT/5 + H_offset; j+=5) { // y
-        double x = (double) i/ ((double) MAP_WIDTH);
-        double y = (double) j/ ((double) MAP_HEIGHT);
-
-        double n = noise( 0.5*x,  0.5*y, 0.8, perm);
-
-        // double n = 20 * noise(x, y, 0.8, perm);
-        // n = n - floor(n);
-        n = abs(n);
-        if (n < 0.1) {
-          node.x = i;
-          node.y = j;
-          vertex.insert({node, make_pair(key, 0)});
-          key++;
-        }
-        else if (n < 0.2) {
-          node.x = i;
-          node.y = j;
-          vertex.insert({node, make_pair(key, 1)});
-          key++;
-        }
-        else if (n < 0.3) {
-          node.x = i;
-          node.y = j;
-          vertex.insert({node, make_pair(key, 2)});
-          key++;
-        }
-
-        
-        coords.push_back(n);
-        // cout << n << " ";
-        // cout << n/1000 << endl;
+  int counter = 0;
+  int mapnum = 1;
+  for (auto i : noise) {
+    if (i < 0.1) {  //ground
+      node.x = x;
+      node.y = y;
+      graph.addVertex(key);
+      vertex.insert({node, make_pair(key, 1)});
+      key++;
+    }
+    else if (i < 0.2) { //green
+      node.x = x;
+      node.y = y;
+      graph.addVertex(key);
+      vertex.insert({node, make_pair(key, 2)});
+      key++;
+    }
+    else if (i < 0.3) { //water
+      node.x = x;
+      node.y = y;
+      graph.addVertex(key);
+      vertex.insert({node, make_pair(key, 3)});
+      key++;
+    }
+    // cout << x << " " << y << endl;
+    x+=5;
+    if ((x+W_offset)%240 == 0) {
+      y += 5;
+      x = W_offset;
+      counter++;
+    }
+    if (counter == 48) {
+      counter = 0;
+      y = H_offset;
+      W_offset += 240;
+      x = W_offset;
+      
+      
+      if (mapnum%5==0) {
+        W_offset = 0;
+        x = 0;
+        H_offset += 240;
+        y = H_offset;
       }
+      mapnum++;
     }
-    H_offset += MAP_WIDTH/5;
-    if (grid%5==0) {
-      W_offset += MAP_HEIGHT/5;
-      H_offset = 0;
-    }
-    
+
   }
 }
 
@@ -105,7 +101,7 @@ bool wait_confirmation(float waittime) {
 
   string line;
   line = Serial.readline(waittime); // read from serial monitor with timeout
-  cout << "got " << line;
+  // cout << "got " << line;
   if (line == "" || line.substr(0,1) != "A") {  // if timeout or incorrect response set false
     return false;
   }
@@ -120,27 +116,27 @@ void communicate(list<pointData> path) {
   Serial.writeline("\n");
   confirm = wait_confirmation(1000);
   if (!confirm) {
-        cout << "error" << endl;
-        // return;
+    cout << "error" << endl;
+    return;
   }
   for (auto i : path) {
-    cout << i.x << " " << i.y << endl;
+    // cout << i.x << " " << i.y << endl;
     Serial.writeline(to_string(i.x));
     Serial.writeline("\n");
     confirm = wait_confirmation(1000);
     if (!confirm) {
-        cout << "error" << endl;
-        // return;
+      cout << "error" << endl;
+      return;
     }
     Serial.writeline(to_string(i.y));
     Serial.writeline("\n");
     confirm = wait_confirmation(1000);
     if (!confirm) {
-        cout << "error" << endl;
-        // return;
+      cout << "error" << endl;
+      return;
     }
   }
-  cout <<"sending E" <<endl;
+  // cout <<"sending E" <<endl;
   Serial.writeline("E\n");
 }
 
@@ -193,7 +189,7 @@ string waitRequest() {
   string line;
   do {
     line = Serial.readline();
-    cout << "recieved " << line << endl;
+    // cout << "recieved " << line << endl;
   } while (line.substr(0,1) != "R");
   // cout << "recieved" << endl;
   return line;
@@ -210,6 +206,7 @@ void findEdge(WDigraph &graph,const unordered_map<pointData, pair<int,int>, poin
     if (find != vertex.end()) {
       // cout << "point to the left" << endl;
       graph.addEdge(i.second.first, vertex.at(p).first, i.second.second+vertex.at(p).second);
+      // cout << i.second.second+vertex.at(p).second << endl;
     }
     p.x = i.first.x + 5;
     p.y = i.first.y;
@@ -217,6 +214,7 @@ void findEdge(WDigraph &graph,const unordered_map<pointData, pair<int,int>, poin
     if (find != vertex.end()) {
       // cout << "point to the right" << endl;
       graph.addEdge(i.second.first, vertex.at(p).first, i.second.second+vertex.at(p).second);
+      // cout << i.second.second+vertex.at(p).second << endl;
     }
     p.x = i.first.x;
     p.y = i.first.y + 5;
@@ -224,6 +222,7 @@ void findEdge(WDigraph &graph,const unordered_map<pointData, pair<int,int>, poin
     if (find != vertex.end()) {
       // cout << "point to the bottom" << endl;
       graph.addEdge(i.second.first, vertex.at(p).first, i.second.second+vertex.at(p).second);
+      // cout << i.second.second+vertex.at(p).second << endl;
     }
     p.x = i.first.x;
     p.y = i.first.y - 5;
@@ -231,6 +230,7 @@ void findEdge(WDigraph &graph,const unordered_map<pointData, pair<int,int>, poin
     if (find != vertex.end()) {
       // cout << "point to the top" << endl;
       graph.addEdge(i.second.first, vertex.at(p).first, i.second.second+vertex.at(p).second);
+      // cout << i.second.second+vertex.at(p).second << endl;
     }
     p.x = i.first.x - 5;
     p.y = i.first.y - 5;
@@ -238,6 +238,7 @@ void findEdge(WDigraph &graph,const unordered_map<pointData, pair<int,int>, poin
     if (find != vertex.end()) {
       // cout << "point to the top-left" << endl;
       graph.addEdge(i.second.first, vertex.at(p).first, i.second.second+vertex.at(p).second);
+      // cout << i.second.second+vertex.at(p).second << endl;
     }
     p.x = i.first.x + 5;
     p.y = i.first.y - 5;
@@ -245,6 +246,7 @@ void findEdge(WDigraph &graph,const unordered_map<pointData, pair<int,int>, poin
     if (find != vertex.end()) {
       // cout << "point to the top-right" << endl;
       graph.addEdge(i.second.first, vertex.at(p).first, i.second.second+vertex.at(p).second);
+      // cout << i.second.second+vertex.at(p).second << endl;
     }
     p.x = i.first.x - 5;
     p.y = i.first.y + 5;
@@ -252,6 +254,7 @@ void findEdge(WDigraph &graph,const unordered_map<pointData, pair<int,int>, poin
     if (find != vertex.end()) {
       // cout << "point to the bottom-left" << endl;
       graph.addEdge(i.second.first, vertex.at(p).first, i.second.second+vertex.at(p).second);
+      // cout << i.second.second+vertex.at(p).second << endl;
     }
     p.x = i.first.x + 5;
     p.y = i.first.y + 5;
@@ -259,15 +262,49 @@ void findEdge(WDigraph &graph,const unordered_map<pointData, pair<int,int>, poin
     if (find != vertex.end()) {
       // cout << "point to the bottom-right" << endl;
       graph.addEdge(i.second.first, vertex.at(p).first, i.second.second+vertex.at(p).second);
+      // cout << i.second.second+vertex.at(p).second << endl;
     }
+
   }
 }
 
-list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash> vertex, const WDigraph graph, const int start, const int end) {
+list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash> vertex, const WDigraph graph, const int start, const int end,
+  const pointData startCoords, const pointData endCoords) {
   unordered_map<int, PLI> searchTree;
+  unordered_map<int, PLI> binarySearchTree;
+  unordered_map<int, PLI> astarSearchTree; 
+
+  clock_t start_time;
+  double length;
   // int start_vertex = closest_point(nodes, start); // start_vertex vertex
   // int end_vertex = closest_point(nodes, end);  // end vertex
-  dijkstra(graph, start, searchTree); // get path from dijkstra
+  //dijkstra(graph, start, searchTree); // get path from dijkstra
+  list<int> vertexes;
+
+
+  for(auto i : vertex) {
+    vertexes.push_front(i.second.first);
+  }
+  
+  // dijkstra(graph, start, searchTree);
+  // fibDijkstra(graph, start, end, searchTree, vertexes); // get path from dijkstra
+  // astar(start, end, vertex,graph);
+
+  start_time = clock();
+  bdijkstra(graph, start, binarySearchTree);
+  length = (clock() - start_time) / (double) CLOCKS_PER_SEC;
+  cout << "The Binary Heap Dijkstra's Running Time : " << length << endl;
+ 
+  
+  start_time = clock();
+  fibdijkstra(graph, start, searchTree, vertexes); // get path from dijkstra
+  length = (clock() - start_time) / (double) CLOCKS_PER_SEC;
+  cout << "The Fibonnaci Heap Dijkstra's Running Time : " << length << endl;
+
+  start_time = clock();
+  fibstar(start, end, vertex, graph, astarSearchTree, startCoords, endCoords); // get path from dijkstra
+  length = (clock() - start_time) / (double) CLOCKS_PER_SEC;
+  cout << "The FibStar Running Time : " << length << endl;
 
   list<int> path;
   list<pointData> path1;
@@ -295,34 +332,29 @@ list<pointData> getPath(const unordered_map<pointData, pair<int,int>, pointHash>
       }
     }
   }
+  // cout << path1.size() << endl;
   return path1;
 }
 
 
 int main() {
-    vector<double> coords;
+    vector<double> noise;
     unordered_map<pointData, pair<int,int>, pointHash> vertex;
     WDigraph graph;
-    vector<int> perm;   // mermutation vector
-    fill(perm);
-    generateNoise(vertex, perm, coords);
-    createImage(coords);
+    readFile(noise);
+    generateNoise(vertex, noise, graph);
     findEdge(graph, vertex);
-    string line = waitRequest();
-    pointData start, end;
-    processRequest(line, start, end);
-    int startnode = closest_point(vertex, start);
-    int endnode = closest_point(vertex, end);
-    // cout << startnode << " " << endnode << endl;
-    // cout << start.x << " " << start.y << " " << end.x << " "<<end.y <<endl;
-    list<pointData> path = getPath(vertex, graph, startnode, endnode); 
-    // cout << path.size() << endl;
-    communicate(path);
-    // waitRequest();
-    // for (i : path) {
-    //   cout << i << endl;
-    // }
-    cout << "done" << endl;
+    while (true) {
+      string line = waitRequest();
+      pointData start, end;
+      processRequest(line, start, end);
+      int startnode = closest_point(vertex, start);
+      int endnode = closest_point(vertex, end);
+      list<pointData> path = getPath(vertex, graph, startnode, endnode, start, end); 
+      communicate(path);
+    }
+    
+
 
     
     return 0;
