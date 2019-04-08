@@ -1,3 +1,14 @@
+/*
+  Name: MingYang Mao (1544517)
+        Andrew Chen (1531348)
+  CCID: mmao, akchen
+  Course: CMPUT 275 Winter 2019
+  275 Project: perlin.h
+
+  Program Description:
+  This program is based on perlin noise by Ken Perlin.
+  https://mrl.nyu.edu/~perlin/noise/
+*/
 #ifndef _PERLIN_H_
 #define _PERLIN_H_
 
@@ -69,7 +80,6 @@ double noise(double x, double y, double z, const vector<int> coords) {
   double GradBA = Gradient(coords[BA], sx-1, sy, sz);
   double GradAB = Gradient(coords[AB], sx, sy - 1, sz);
   double GradBB = Gradient(coords[BB], sx-1, sy-1, sz);
-  // cout << GradAA << " " << GradBA << " " << GradAB << endl;
 
   double GradAA1 = Gradient(coords[AA+1], sx, sy, sz-1);
   double GradBA1 = Gradient(coords[BA+1], sx-1, sy, sz-1);

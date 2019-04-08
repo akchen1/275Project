@@ -1,8 +1,15 @@
+/*
+  Name: MingYang Mao (1544517)
+        Andrew Chen (1531348)
+  CCID: mmao, akchen
+  Course: CMPUT 275 Winter 2019
+  275 Project: arduino_main
+  This file contains the arduino client
+*/
 #include <Arduino.h>
 #include <Adafruit_ILI9341.h>
 #include <SD.h>
 #include <TouchScreen.h>
-
 
 #define TFT_DC 9
 #define TFT_CS 10
@@ -22,14 +29,15 @@
 #define XM A3
 #define YM  5
 #define XP  4
-Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
-TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
-File file;
 
 #define MAP_WIDTH  240
 #define MAP_HEIGHT 240
 #define DISPLAY_WIDTH  320
 #define DISPLAY_HEIGHT 240
+
+Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
+TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
+File file;
 
 const uint16_t buf_size = 256;  // buffer size
 uint16_t buf_len = 0; // buffer length
@@ -407,7 +415,8 @@ void displayEnd() {
   tft.setTextSize(2);
   tft.println("You found the treasure!");
   tft.println();
-  tft.println("Tap the screen to play again");
+  tft.println("Tap the screen to play");
+  tft.println("again");
 
   // check if user touch to play again
   bool touch = false;
@@ -561,8 +570,8 @@ void processBuffer(const char* buffer,bool &xy, int &counter) {
 
 bool read() {
 /* This function reads from serial monitor and stores the characters into
-a buffer. if \n or \r is read, it will process the buffer. It will return true
-if timesout, otherwise false. This code is based of simple_client.cpp */
+a buffer. if \n or \r is read, it will process the buffer.
+This code is based of simple_client.cpp */
 
   char in_char;
   int counter = 0;
@@ -570,7 +579,6 @@ if timesout, otherwise false. This code is based of simple_client.cpp */
   Serial.flush();
   do {  // read in character
     if (Serial.available()) {
-      starttime = millis();
 
       // read the incoming byte:
       in_char = Serial.read();  // read character

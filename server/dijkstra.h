@@ -3,7 +3,7 @@
         Andrew Chen (1531348)
   CCID: mmao, akchen
   Course: CMPUT 275 Winter 2019
-  Assignment 2: dijkstra.h
+  275 Project: dijkstra.h
 
   Program Description:
   This is a header file for dijkstra.cpp

@@ -1,3 +1,13 @@
+/*
+  Name: MingYang Mao (1544517)
+        Andrew Chen (1531348)
+  CCID: mmao, akchen
+  Course: CMPUT 275 Winter 2019
+  275 Project: server_util
+
+  Program Description:
+  This file holds the helper functions to run the server.
+*/
 #ifndef _SERVER_UTIL_H_
 #define _SERVER_UTIL_H_
 
@@ -5,19 +15,19 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
-#include "serialport.h"
-#include "digraph.h"
-#include "wdigraph.h"
-#include "dijkstra.h"
 #include <unordered_map>
 #include <fstream>
 #include <utility>
 #include <random>
 #include <cmath>
 #include <list>
-#include "astar.h"
 #include <ctime>
+#include "astar.h"
 #include "pointData.h"
+#include "serialport.h"
+#include "digraph.h"
+#include "wdigraph.h"
+#include "dijkstra.h"
 
 using namespace std;
 
@@ -120,7 +130,7 @@ submap numbers
 string waitRequest() {
 /* this function waits for arduino to send a request to the server */
 
-  cout << "wating..." << endl;
+  cout << "waiting..." << endl;
   string line;
   do {
     line = Serial.readline();

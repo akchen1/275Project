@@ -3,7 +3,7 @@
         Andrew Chen (1531348)
   CCID: mmao, akchen
   Course: CMPUT 275 Winter 2019
-  Assignment 2: astar.h
+  275 Project: astar.h
   This file contains the method to use fibonnaci heap with A* algorithm
 */
 

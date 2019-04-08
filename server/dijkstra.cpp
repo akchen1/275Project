@@ -3,7 +3,7 @@
         Andrew Chen (1531348)
   CCID: mmao, akchen
   Course: CMPUT 275 Winter 2019
-  Assignment 2: Dijkstra.cpp
+  275 Project: Dijkstra.cpp
 
   Program Description:
   This file is build off of a file provided in eClass from the CMPUT 275 

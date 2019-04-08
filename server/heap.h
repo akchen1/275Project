@@ -3,7 +3,7 @@
         Andrew Chen (1531348)
   CCID: mmao, akchen
   Course: CMPUT 275 Winter 2019
-  Assignment 2: Heap.h
+  275 Project: Heap.h
 
   Program Description:
   This file is build off of a file provided in eClass from the CMPUT 275 

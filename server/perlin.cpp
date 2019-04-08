@@ -1,13 +1,25 @@
+/*
+  Name: MingYang Mao (1544517)
+        Andrew Chen (1531348)
+  CCID: mmao, akchen
+  Course: CMPUT 275 Winter 2019
+  275 Project: perlin.cpp
+
+  Program Description:
+  This function uses the functions in perlin.h to generate a txt file
+  with noise values which correspond to a tile in a map
+*/
 #include "perlin.h"
+#include <string>
 
 #define MAP_WIDTH 1200
 #define MAP_HEIGHT 1200
 
-void createImage(const vector<double> coords) {
+void createImage(const vector<double> coords, string fname) {
 /* this function writes the calculated noise values onto a text file */
 
   ofstream mapdata;
-  mapdata.open("mapdata.txt");
+  mapdata.open(fname);
   mapdata.precision(5);
   mapdata.setf(ios::fixed, ios::floatfield);
   for (auto i : coords) {
@@ -47,10 +59,10 @@ with corresponding x,y coordinates */
 int main() {
 
   vector<int> perm;
-  fill(perm);
+  fill(perm); // fill the gradient vector
   vector<double> coords;
   generateNoise(perm, coords);
-  createImage(coords);
+  createImage(coords, "mapdata.txt");
 
   return 0;
 }

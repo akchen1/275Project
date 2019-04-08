@@ -1,3 +1,13 @@
+/*
+  Name: MingYang Mao (1544517)
+        Andrew Chen (1531348)
+  CCID: mmao, akchen
+  Course: CMPUT 275 Winter 2019
+  275 Project: pointData.h
+
+  Program Description:
+  This file holds point data struct used in many files
+*/
 #ifndef _pointData_H_
 #define _pointData_H_
 

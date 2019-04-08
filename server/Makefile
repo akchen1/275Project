@@ -1,3 +1,11 @@
+#
+#  Name: MingYang Mao (1544517)
+#        Andrew Chen (1531348)
+#  CCID: mmao, akchen
+#  Course: CMPUT 275 Winter 2019
+#  275 Project: Make file
+#
+
 CC=g++
 CFLAGS=-c -Wall -O2 -std=c++11
 LFLAGS=
@@ -18,11 +26,11 @@ digraph.o: digraph.cpp digraph.h
 serialport.o: serialport.cpp serialport.h
 	$(CC) serialport.cpp -o serialport.o $(CFLAGS)
 
-perlin: perlin.cpp perlin.h
-	$(CC) perlin.cpp -o run_perlin -Wall -std=c++11
-
 dijkstra.o: dijkstra.cpp dijkstra.h
 	$(CC) dijkstra.cpp -o dijkstra.o $(CFLAGS)
+
+perlin: perlin.cpp perlin.h
+	$(CC) perlin.cpp -o run_perlin -Wall -std=c++11
 
 clean:
 	@rm $(OBJS) $(PROGS)

@@ -1,0 +1,72 @@
+Name: MingYang Mao (1544517)
+	  Andrew Chen (1531348)
+CMPUT 275 WINTER 2019
+
+FINAL PROJECT: Procedural Generation using Perlin Noise and Using
+			   A* and Dijkstra's Pathfinding Algorithims Implementing
+			   Fibonnaci Heaps
+
+Included Files (Files with ! symbols mean they originate from eClass)
+	* astar.h
+	! digraph.cpp
+	! digraph.h
+	* dijkstra.cpp
+	* dijkstra.h
+	* fibonnaci.h
+	! heap.h
+	* perlin.cpp
+	* perlin.h
+	* pointData.h
+	! serialport.cpp
+	! serialport.h
+	* Server_main.cpp
+	* server_util.h
+	! wdigraph.h
+	* README
+	* Makefile
+
+Wiring Instructions:
+	Touchscreen
+		1. GND - GND
+		2. Vin - 5V
+		3. CLK - pin 52
+		4. MISO - pin 50
+		5. MOSI - pin 51
+		6. CS - pin 10
+		7. D/C - pin 9
+		8. Y+ - A2
+		9. X+ - pin 4
+		10. Y- - pin 5
+		11. X- - A3
+		12. CCS - pin 6
+	Joystick
+		1. GND - GND
+		2. 5V - 5V
+		3. VRx - A1
+		4. VRy - A0
+		5. SW - pin 8
+		
+Running Instructions:
+	1. In the folder server, open a terminal and run 'make perlin'. This will create
+		an executable file called 'run_perlin'
+	2. run './run_perlin' this will create a text file called mapdata.txt. This map data
+		will be used on the arduino and server.
+	3. Copy the mapdata.txt file to your arduino's sd card using any method. The same copy of
+		mapdata.txt needs to be in the server folder and on the arduino sd card. Rerunning 
+		./run_perlin will create a new mapdata.txt everytime so if you ./run_perlin you need to repeat step 3 again and move the files.
+	4. Back in the server folder, in the terminal type 'make'. This will create several object 		files as well as an executable called 'Server_main'
+	5. Redirect out to the arduino folder and 'make upload' with your arduino connected and 
+		wired correctly (see wiring instructions).
+	6. Go back to the server folder and run './Server_main'
+	7. At this point you should see "waiting...". This means the server is ready to recieve a
+		reqeust from the arduino.
+	8. On the ardino, there are two buttons. The new button generates a new goal for the path 
+		finder and the player to find. The Solve button will communicate with the server by sending the coordinates of the player and goal and the server will send the path back to the arduino. By following this path, a player can find the goal.
+	9. Running make clean will remove object files and executables
+
+Description:
+This project first generates a mapdata text file which can be uploaded to the Arduino's SD card which will enable it to procedurally generate a unique map. The user can then navigate the map using a joystick on the arduino and explore the given map. The goal is for the user to find a red box which symbolizes the end goal. If the user is unable to find the box, they may touch the solve button on the screen which will
+draw a path to the box for the user, on the console it will then display the time it took to run dijkstras for each implementation. The goal of the project is to show the differences in running time through different search algorithmns and using different min-heaps.
+
+Notes and Assumptions:
+The program assumes that the user has access to eClass, some of the functions used within the project were not written by us and therefore all credit is given to the authors on eClass. This is indicated on the files with "!" in the included files list.
