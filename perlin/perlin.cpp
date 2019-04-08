@@ -1,9 +1,11 @@
 #include "perlin.h"
-#include <iostream>
+
 #define MAP_WIDTH 1200
 #define MAP_HEIGHT 1200
 
 void createImage(const vector<double> coords) {
+/* this function writes the calculated noise values onto a text file */
+
   ofstream mapdata;
   mapdata.open("mapdata.txt");
   mapdata.precision(5);
@@ -15,8 +17,13 @@ void createImage(const vector<double> coords) {
 }
 
 void generateNoise(const vector<int> perm, vector<double>& coords) {
+/* this function sets the noise values to the appropriate map number
+with corresponding x,y coordinates */
+
+  // used to keep track which submap we are on
   int W_offset = 0;
   int H_offset = 0;
+  // iterate through each submap
   for (int grid = 1; grid <= 25; grid ++) {
     for (int i = 0 + W_offset; i < MAP_WIDTH/5 + W_offset; i+=5) {  // y
       for (int j = 0 + H_offset; j < MAP_HEIGHT/5 + H_offset; j+=5) { // x
@@ -24,22 +31,16 @@ void generateNoise(const vector<int> perm, vector<double>& coords) {
         double x = (double) j/ ((double) MAP_HEIGHT);
 
         double n = noise( 20*x,  20*y, 0.8, perm);
-
-        // double n = 20 * noise(x, y, 0.8, perm);
-        // n = n - floor(n);
         n = abs(n);
-        cout << j << " " << i << endl;
         coords.push_back(n);
-        // cout << n << " ";
-        // cout << n/1000 << endl;
       }
     }
+    // used to adjust x,y depending on which submap we are on
     H_offset += MAP_WIDTH/5;
     if (grid%5==0) {
       W_offset += MAP_HEIGHT/5;
       H_offset = 0;
     }
-    
   }
 }
 
